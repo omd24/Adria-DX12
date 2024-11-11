@@ -17,14 +17,14 @@ namespace adria
 	struct Light;
 	class RainEvent;
 
-	enum AmbientOcclusionType : Uint8;
-	enum class UpscalerType : Uint8;
-	enum AntiAliasing : Uint8;
+	enum AmbientOcclusionType : uint8;
+	enum class UpscalerType : uint8;
+	enum AntiAliasing : uint8;
 
-	using RenderResolutionChangedDelegate = Delegate<void(Uint32, Uint32)>;
+	using RenderResolutionChangedDelegate = Delegate<void(uint32, uint32)>;
 	class PostProcessor
 	{
-		enum PostEffectType : Uint32
+		enum PostEffectType : uint32
 		{
 			PostEffectType_MotionVectors,
 			PostEffectType_LensFlare,
@@ -48,7 +48,7 @@ namespace adria
 		};
 
 	public:
-		PostProcessor(GfxDevice* gfx, entt::registry& reg, Uint32 width, Uint32 height);
+		PostProcessor(GfxDevice* gfx, entt::registry& reg, uint32 width, uint32 height);
 		~PostProcessor();
 
 		void AddAmbientOcclusionPass(RenderGraph& rg);
@@ -57,18 +57,18 @@ namespace adria
 		void AddRenderResolutionChangedCallback(RenderResolutionChangedDelegate delegate);
 		void GUI();
 
-		void OnRainEvent(Bool enabled);
-		void OnResize(Uint32 w, Uint32 h);
-		void OnRenderResolutionChanged(Uint32 w, Uint32 h);
+		void OnRainEvent(bool enabled);
+		void OnResize(uint32 w, uint32 h);
+		void OnRenderResolutionChanged(uint32 w, uint32 h);
 		void OnSceneInitialized();
 
-		Bool NeedsJitter() const { return HasTAA() || HasUpscaler(); }
-		Bool NeedsVelocityBuffer() const;
-		Bool NeedsHistoryBuffer() const;
-		Bool HasUpscaler() const;
-		Bool HasTAA() const;
-		Bool HasFXAA() const;
-		Bool IsPathTracing() const;
+		bool NeedsJitter() const { return HasTAA() || HasUpscaler(); }
+		bool NeedsVelocityBuffer() const;
+		bool NeedsHistoryBuffer() const;
+		bool HasUpscaler() const;
+		bool HasTAA() const;
+		bool HasFXAA() const;
+		bool IsPathTracing() const;
 
 		void SetFinalResource(RGResourceName name)
 		{
@@ -80,12 +80,12 @@ namespace adria
 	private:
 		GfxDevice* gfx;
 		entt::registry& reg;
-		Uint32 display_width;
-		Uint32 display_height;
-		Uint32 render_width;
-		Uint32 render_height;
-		Bool ray_tracing_supported = false;
-		Bool is_path_tracing_path = false;
+		uint32 display_width;
+		uint32 display_height;
+		uint32 render_width;
+		uint32 render_height;
+		bool ray_tracing_supported = false;
+		bool is_path_tracing_path = false;
 
 		RGResourceName final_resource;
 

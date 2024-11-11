@@ -4,7 +4,7 @@
 
 namespace adria
 {
-	enum class FileStatus : Uint8
+	enum class FileStatus : uint8
 	{
 		Created,
 		Modified,
@@ -22,7 +22,7 @@ namespace adria
 			file_modified_event.RemoveAll();
 		}
 
-		void AddPathToWatch(std::string const& path, Bool recursive = true)
+		void AddPathToWatch(std::string const& path, bool recursive = true)
 		{
 			if (recursive)
 			{

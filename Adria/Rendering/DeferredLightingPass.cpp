@@ -15,7 +15,7 @@ using namespace DirectX;
 namespace adria
 {
 
-	DeferredLightingPass::DeferredLightingPass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h)
+	DeferredLightingPass::DeferredLightingPass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h)
 	{
 		CreatePSOs();
 	}
@@ -66,21 +66,21 @@ namespace adria
 												context.GetReadWriteTexture(data.output) };
 
 				GfxDescriptor dst_handle = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_handles));
-				Uint32 i = dst_handle.GetIndex();
+				uint32 i = dst_handle.GetIndex();
 				gfx->CopyDescriptors(dst_handle, src_handles);
 
-				Float clear[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				float clear[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 				cmd_list->ClearUAV(context.GetTexture(*data.output), gfx->GetDescriptorGPU(i + 5),
 					context.GetReadWriteTexture(data.output), clear);
 
 				struct DeferredLightingConstants
 				{
-					Uint32 normal_metallic_idx;
-					Uint32 diffuse_idx;
-					Uint32 depth_idx;
-					Uint32 emissive_idx;
-					Uint32 ao_idx;
-					Uint32 output_idx;
+					uint32 normal_metallic_idx;
+					uint32 diffuse_idx;
+					uint32 depth_idx;
+					uint32 emissive_idx;
+					uint32 ao_idx;
+					uint32 output_idx;
 				} constants =
 				{
 					.normal_metallic_idx = i, .diffuse_idx = i + 1, .depth_idx = i + 2, .emissive_idx = i + 3, .ao_idx = i + 4, .output_idx = i + 5

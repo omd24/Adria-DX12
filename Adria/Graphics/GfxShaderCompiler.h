@@ -8,7 +8,7 @@ namespace adria
 	{
 		GfxShader shader;
 		std::vector<std::string> includes;
-		Uint64 shader_hash[2];
+		uint64 shader_hash[2];
 	};
 	using GfxShaderCompileInput = GfxShaderDesc;
 
@@ -16,7 +16,7 @@ namespace adria
 	{
 		void Initialize();
 		void Destroy();
-		Bool CompileShader(GfxShaderCompileInput const& input, GfxShaderCompileOutput& output, Bool bypass_cache);
+		bool CompileShader(GfxShaderCompileInput const& input, GfxShaderCompileOutput& output, bool bypass_cache);
 		void ReadBlobFromFile(std::string const& filename, GfxShaderBlob& blob);
 	}
 }

@@ -6,7 +6,7 @@
 
 namespace adria
 {
-	enum class KeyCode : Uint32
+	enum class KeyCode : uint32
 	{
 
 		F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
@@ -40,11 +40,11 @@ namespace adria
 	class Window;
 	struct WindowEventData;
 
-	DECLARE_EVENT(WindowResizedEvent, Input, Uint32, Uint32)
-	DECLARE_EVENT(RightMouseClickedEvent, Input, Sint32, Sint32)
-	DECLARE_EVENT(MiddleMouseScrolledEvent, Input, Sint32)
+	DECLARE_EVENT(WindowResizedEvent, Input, uint32, uint32)
+	DECLARE_EVENT(RightMouseClickedEvent, Input, int32, int32)
+	DECLARE_EVENT(MiddleMouseScrolledEvent, Input, int32)
 	DECLARE_EVENT(F5PressedEvent, Input)
-	DECLARE_EVENT(PrintScreenPressedEvent, Input, Char const*)
+	DECLARE_EVENT(PrintScreenPressedEvent, Input, char const*)
 	struct InputEvents
 	{
 		MiddleMouseScrolledEvent scroll_mouse_event;
@@ -68,34 +68,34 @@ namespace adria
 		void Tick();
 		void OnWindowEvent(WindowEventData const&);
 
-		Bool GetKey(KeyCode key)    const { return keys[(Uint64)key]; }
-		Bool IsKeyDown(KeyCode key) const { return GetKey(key) && !prev_keys[(Uint64)key]; }
-		Bool IsKeyUp(KeyCode key)   const { return !GetKey(key) && prev_keys[(Uint64)key]; }
+		bool GetKey(KeyCode key)    const { return keys[(uint64)key]; }
+		bool IsKeyDown(KeyCode key) const { return GetKey(key) && !prev_keys[(uint64)key]; }
+		bool IsKeyUp(KeyCode key)   const { return !GetKey(key) && prev_keys[(uint64)key]; }
 
-		void SetMouseVisibility(Bool visible);
-		void SetMousePosition(Float xpos, Float ypos);
+		void SetMouseVisibility(bool visible);
+		void SetMousePosition(float xpos, float ypos);
 
-		Float GetMousePositionX()  const { return mouse_position_x; }
-		Float GetMousePositionY()  const { return mouse_position_y; }
+		float GetMousePositionX()  const { return mouse_position_x; }
+		float GetMousePositionY()  const { return mouse_position_y; }
 
-		Float GetMouseDeltaX()     const { return mouse_position_x - prev_mouse_position_x; }
-		Float GetMouseDeltaY()     const { return mouse_position_y - prev_mouse_position_y; }
-		Float GetMouseWheelDelta() const { return mmouse_wheel_delta; }
+		float GetMouseDeltaX()     const { return mouse_position_x - prev_mouse_position_x; }
+		float GetMouseDeltaY()     const { return mouse_position_y - prev_mouse_position_y; }
+		float GetMouseWheelDelta() const { return mmouse_wheel_delta; }
 
 	private:
 		InputEvents input_events;
-		std::array<Bool, (Uint64)KeyCode::Count> keys;
-		std::array<Bool, (Uint64)KeyCode::Count> prev_keys;
+		std::array<bool, (uint64)KeyCode::Count> keys;
+		std::array<bool, (uint64)KeyCode::Count> prev_keys;
 
-		Float mouse_position_x = 0.0f;
-		Float mouse_position_y = 0.0f;
+		float mouse_position_x = 0.0f;
+		float mouse_position_y = 0.0f;
 
-		Float prev_mouse_position_x = 0.0f;
-		Float prev_mouse_position_y = 0.0f;
-		Float mmouse_wheel_delta = 0.0f;
+		float prev_mouse_position_x = 0.0f;
+		float prev_mouse_position_y = 0.0f;
+		float mmouse_wheel_delta = 0.0f;
 
-		Bool new_frame = false;
-		Bool resizing = false;
+		bool new_frame = false;
+		bool resizing = false;
 
 		Window* window = nullptr;
 

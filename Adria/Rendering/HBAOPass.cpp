@@ -11,7 +11,7 @@
 namespace adria
 {
 	
-	HBAOPass::HBAOPass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h), hbao_random_texture(nullptr),
+	HBAOPass::HBAOPass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h), hbao_random_texture(nullptr),
 		blur_pass(gfx)
 	{
 		CreatePSO();
@@ -53,22 +53,22 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct HBAOConstants
 				{
-					Float  r2;
-					Float  radius_to_screen;
-					Float  power;
-					Float  noise_scale;
+					float  r2;
+					float  radius_to_screen;
+					float  power;
+					float  noise_scale;
 
-					Uint32   depth_idx;
-					Uint32   normal_idx;
-					Uint32   noise_idx;
-					Uint32   output_idx;
+					uint32   depth_idx;
+					uint32   normal_idx;
+					uint32   noise_idx;
+					uint32   output_idx;
 				} constants =
 				{
-					.r2 = params.hbao_radius * params.hbao_radius, .radius_to_screen = params.hbao_radius * 0.5f * Float(height) / (tanf(frame_data.camera_fov * 0.5f) * 2.0f),
+					.r2 = params.hbao_radius * params.hbao_radius, .radius_to_screen = params.hbao_radius * 0.5f * float(height) / (tanf(frame_data.camera_fov * 0.5f) * 2.0f),
 					.power = params.hbao_power,
 					.noise_scale = std::max(width * 1.0f / NOISE_DIM,height * 1.0f / NOISE_DIM),
 					.depth_idx = i, .normal_idx = i + 1, .noise_idx = i + 2, .output_idx = i + 3
@@ -98,7 +98,7 @@ namespace adria
 			}, GUICommandGroup_PostProcessing, GUICommandSubGroup_AO);
 	}
 
-	void HBAOPass::OnResize(Uint32 w, Uint32 h)
+	void HBAOPass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 	}
@@ -106,10 +106,10 @@ namespace adria
 	void HBAOPass::OnSceneInitialized()
 	{
 		RealRandomGenerator rand_float{ 0.0f, 1.0f };
-		std::vector<Float> random_texture_data;
-		for (Sint32 i = 0; i < 8 * 8; i++)
+		std::vector<float> random_texture_data;
+		for (int32 i = 0; i < 8 * 8; i++)
 		{
-			Float rand = rand_float();
+			float rand = rand_float();
 			random_texture_data.push_back(sin(rand));
 			random_texture_data.push_back(cos(rand));
 			random_texture_data.push_back(rand_float());
@@ -118,7 +118,7 @@ namespace adria
 
 		GfxTextureSubData data{};
 		data.data = random_texture_data.data();
-		data.row_pitch = 8 * 4 * sizeof(Float);
+		data.row_pitch = 8 * 4 * sizeof(float);
 		data.slice_pitch = 0;
 
 		GfxTextureData init_data{};

@@ -10,12 +10,12 @@ namespace adria
 
 		struct BufferEntry
 		{
-			BufferEntry(Uint64 fv, OffsetType off, OffsetType sz) :
+			BufferEntry(uint64 fv, OffsetType off, OffsetType sz) :
 				frame(fv),
 				offset(off),
 				size(sz)
 			{}
-			Uint64 frame;
+			uint64 frame;
 			OffsetType offset;
 			OffsetType size;
 		};
@@ -70,13 +70,13 @@ namespace adria
 			return INVALID_OFFSET;
 		}
 
-		void FinishCurrentFrame(Uint64 frame)
+		void FinishCurrentFrame(uint64 frame)
 		{
 			completed_frames.emplace(frame, tail, current_frame_size);
 			current_frame_size = 0;
 		}
 
-		void ReleaseCompletedFrames(Uint64 completed_frame)
+		void ReleaseCompletedFrames(uint64 completed_frame)
 		{
 			while (!completed_frames.empty() &&
 				completed_frames.front().frame <= completed_frame)
@@ -90,8 +90,8 @@ namespace adria
 		}
 
 		OffsetType MaxSize()  const { return max_size; }
-		Bool Full()			  const { return used_size == max_size; };
-		Bool Empty()		  const { return used_size == reserve; };
+		bool Full()			  const { return used_size == max_size; };
+		bool Empty()		  const { return used_size == reserve; };
 		OffsetType UsedSize() const { return used_size; }
 
 	private:

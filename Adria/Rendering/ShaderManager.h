@@ -7,7 +7,7 @@ namespace adria
 	class GfxShader;
 	class GfxShaderKey;
 
-	enum ShaderID : Uint8
+	enum ShaderID : uint8
 	{
 		ShaderID_Invalid,
 		VS_Sky,

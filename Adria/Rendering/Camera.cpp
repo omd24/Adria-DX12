@@ -8,25 +8,17 @@ using namespace DirectX;
 
 namespace adria
 {
-	Camera::Camera(CameraParameters const& desc) 
-		: position(desc.position), aspect_ratio(1.0f), fov(desc.fov), near_plane(desc.far_plane), far_plane(desc.near_plane), enabled(true), changed(false)
-	{
-		Vector3 look_vector = desc.look_at - position;
-		look_vector.Normalize();
 
-		Float yaw = std::atan2(look_vector.x, look_vector.z);
-		Float pitch = std::asin(std::clamp(-look_vector.y, -1.0f, 1.0f));
-		Quaternion pitch_quat = Quaternion::CreateFromYawPitchRoll(0, pitch, 0);
-		Quaternion yaw_quat = Quaternion::CreateFromYawPitchRoll(yaw, 0, 0);
-		orientation = pitch_quat * orientation * yaw_quat;
+	Camera::Camera(CameraParameters const& desc) : position{ desc.position }, right_vector{ 1.0f,0.0f,0.0f }, up_vector{ 0.0f,1.0f,0.0f },
+		aspect_ratio{ desc.aspect_ratio }, fov{ desc.fov }, near_plane{ desc.far_plane }, far_plane{ desc.near_plane },
+		speed{ desc.speed }, sensitivity{ desc.sensitivity }
+	{
+		look_vector = desc.look_at - position;
+		UpdateViewMatrix();
+		SetLens(fov, aspect_ratio, near_plane, far_plane);
 	}
 
-	Vector3 Camera::Forward() const
-	{
-		return Vector3::Transform(Vector3::Forward, orientation);
-	}
-
-	Vector2 Camera::Jitter(Uint32 frame_index) const
+	Vector2 Camera::Jitter(uint32 frame_index) const
 	{
 		Vector2 jitter{};
 		constexpr HaltonSequence<16, 2> x;
@@ -35,91 +27,76 @@ namespace adria
 		jitter.y = y[frame_index % 16] - 0.5f;
 		return jitter;
 	}
-	Float Camera::Near() const
+	float Camera::Near() const
 	{
 		return near_plane;
 	}
-	Float Camera::Far() const
+	float Camera::Far() const
 	{
 		return far_plane;
 	}
-	Float Camera::Fov() const
+	float Camera::Fov() const
 	{
 		return fov;
 	}
-	Float Camera::AspectRatio() const
+	float Camera::AspectRatio() const
 	{
 		return aspect_ratio;
 	}
 
-	void Camera::Update(Float dt)
+	void Camera::Tick(float dt)
 	{
-		changed = false;
-		if (!enabled || g_Input.GetKey(KeyCode::Space))
-		{
-			return;
-		}
+		if (!enabled) return;
+		Input& input = g_Input;
+		if (input.GetKey(KeyCode::Space)) return;
 
-		if (g_Input.GetKey(KeyCode::MouseRight))
-		{
-			Float dx = g_Input.GetMouseDeltaX();
-			Float dy = g_Input.GetMouseDeltaY();
-			Quaternion pitch_quat = Quaternion::CreateFromYawPitchRoll(0, dy * dt * 0.25f, 0);
-			Quaternion yaw_quat = Quaternion::CreateFromYawPitchRoll(dx * dt * 0.25f, 0, 0);
-			orientation = pitch_quat * orientation * yaw_quat;
-			changed = true;
-		}
+		float speed_factor = 1.0f;
 
-		Vector3 movement{};
-		if (g_Input.GetKey(KeyCode::W)) movement.z += 1.0f;
-		if (g_Input.GetKey(KeyCode::S)) movement.z -= 1.0f;
-		if (g_Input.GetKey(KeyCode::D)) movement.x += 1.0f;
-		if (g_Input.GetKey(KeyCode::A)) movement.x -= 1.0f;
-		if (g_Input.GetKey(KeyCode::Q)) movement.y += 1.0f;
-		if (g_Input.GetKey(KeyCode::E)) movement.y -= 1.0f;
-		movement = Vector3::Transform(movement, orientation);
-		velocity = Vector3::SmoothStep(velocity, movement, 0.35f);
+		if (input.GetKey(KeyCode::ShiftLeft)) speed_factor *= 5.0f;
+		if (input.GetKey(KeyCode::CtrlLeft))  speed_factor *= 0.2f;
 
-		if (velocity.LengthSquared() > 1e-4)
+		if (input.GetKey(KeyCode::W)) Walk(speed_factor * dt);
+		if (input.GetKey(KeyCode::S)) Walk(-speed_factor * dt);
+		if (input.GetKey(KeyCode::A)) Strafe(-speed_factor * dt);
+		if (input.GetKey(KeyCode::D)) Strafe(speed_factor * dt);
+		if (input.GetKey(KeyCode::Q)) Jump(speed_factor * dt);
+		if (input.GetKey(KeyCode::E)) Jump(-speed_factor * dt);
+		if (input.GetKey(KeyCode::MouseRight))
 		{
-			Float speed_factor = 1.0f;
-			if (g_Input.GetKey(KeyCode::ShiftLeft)) speed_factor *= 5.0f;
-			if (g_Input.GetKey(KeyCode::CtrlLeft))  speed_factor *= 0.2f;
-			position += velocity * dt * speed_factor * 25.0f;
-			changed = true;
+			float dx = input.GetMouseDeltaX();
+			float dy = input.GetMouseDeltaY();
+			Pitch((int64)dy);
+			Yaw((int64)dx);
 		}
-		
-		Matrix view_inverse = Matrix::CreateFromQuaternion(orientation) * Matrix::CreateTranslation(position);
-		view_inverse.Invert(view_matrix);
-		SetProjectionMatrix(fov, aspect_ratio, near_plane, far_plane);
+		UpdateViewMatrix();
 	}
-	void Camera::Zoom(Sint32 increment)
+	void Camera::Zoom(int32 increment)
 	{
 		if (!enabled) return;
 		fov -= XMConvertToRadians(increment * 1.0f);
-		fov = std::clamp(fov, 0.00005f, pi_div_2<Float>);
-		SetProjectionMatrix(fov, aspect_ratio, near_plane, far_plane);
+		fov = std::clamp(fov, 0.00005f, pi_div_2<float>);
+		SetLens(fov, aspect_ratio, near_plane, far_plane);
 	}
-	void Camera::OnResize(Uint32 w, Uint32 h)
+	void Camera::OnResize(uint32 w, uint32 h)
 	{
-		SetAspectRatio(static_cast<Float>(w) / h);
+		SetAspectRatio(static_cast<float>(w) / h);
 	}
 
-	void Camera::SetAspectRatio(Float ar)
+	void Camera::SetAspectRatio(float ar)
 	{
 		aspect_ratio = ar;
-		SetProjectionMatrix(fov, aspect_ratio, near_plane, far_plane);
+		SetLens(fov, aspect_ratio, near_plane, far_plane);
 	}
-	void Camera::SetFov(Float _fov)
+	void Camera::SetFov(float _fov)
 	{
 		fov = _fov;
-		SetProjectionMatrix(fov, aspect_ratio, near_plane, far_plane);
+		SetLens(fov, aspect_ratio, near_plane, far_plane);
 	}
-	void Camera::SetNearAndFar(Float n, Float f)
+	void Camera::SetNearAndFar(float n, float f)
 	{
 		near_plane = n;
 		far_plane = f;
-		SetProjectionMatrix(fov, aspect_ratio, near_plane, far_plane);
+		SetLens(fov, aspect_ratio, near_plane, far_plane);
 	}
 	void Camera::SetPosition(Vector3 const& pos)
 	{
@@ -145,8 +122,49 @@ namespace adria
 		frustum.Transform(frustum, view_matrix.Invert());
 		return frustum;
 	}
-	void Camera::SetProjectionMatrix(Float fov, Float aspect, Float zn, Float zf)
+
+	void Camera::UpdateViewMatrix()
+	{
+		look_vector.Normalize();
+		right_vector = up_vector.Cross(look_vector);
+		right_vector.Normalize();
+		up_vector = look_vector.Cross(right_vector);
+		up_vector.Normalize();
+		SetView();
+	}
+
+	void Camera::Strafe(float dt)
+	{
+		position += dt * speed * right_vector;
+	}
+	void Camera::Walk(float dt)
+	{
+		position += dt * speed * look_vector;
+	}
+	void Camera::Jump(float dt)
+	{
+		position += dt * speed * up_vector;
+	}
+	void Camera::Pitch(int64 dy)
+	{
+		Matrix R = Matrix::CreateFromAxisAngle(right_vector, sensitivity * XMConvertToRadians((float)dy));
+		up_vector = Vector3::TransformNormal(up_vector, R);
+		look_vector = Vector3::TransformNormal(look_vector, R);
+	}
+	void Camera::Yaw(int64 dx)
+	{
+		Matrix R = Matrix::CreateRotationY(sensitivity * XMConvertToRadians((float)dx));
+
+		right_vector = Vector3::TransformNormal(right_vector, R);
+		up_vector = Vector3::TransformNormal(up_vector, R);
+		look_vector = Vector3::TransformNormal(look_vector, R);
+	}
+	void Camera::SetLens(float fov, float aspect, float zn, float zf)
 	{
 		projection_matrix = XMMatrixPerspectiveFovLH(fov, aspect, zn, zf);
+	}
+	void Camera::SetView()
+	{
+		view_matrix = XMMatrixLookToLH(position, look_vector, up_vector);
 	}
 }

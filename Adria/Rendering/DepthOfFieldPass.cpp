@@ -13,48 +13,48 @@
 
 namespace adria
 {
-	static TAutoConsoleVariable<Float> MaxCircleOfConfusion("r.DepthOfField.MaxCoC", 0.05f, "Maximum value of Circle of Confusion in Custom Depth of Field effect");
-	static TAutoConsoleVariable<Float> AlphaInterpolation("r.DepthOfField.AlphaInterpolation", 1.0f, "Interpolation factor");
+	static TAutoConsoleVariable<float> MaxCircleOfConfusion("r.DepthOfField.MaxCoC", 0.05f, "Maximum value of Circle of Confusion in Custom Depth of Field effect");
+	static TAutoConsoleVariable<float> AlphaInterpolation("r.DepthOfField.AlphaInterpolation", 1.0f, "Interpolation factor");
 	static TAutoConsoleVariable<int>   BokehKernelRingCount("r.DepthOfField.Bokeh.KernelRingCount", 5, "");
 	static TAutoConsoleVariable<int>   BokehKernelRingDensity("r.DepthOfField.Bokeh.KernelRingDensity", 7, "");
-	static TAutoConsoleVariable<Bool>  BokehKarisInverse("r.DepthOfField.Bokeh.KarisInverse", false, "Karis Inverse: 0 - disable, 1 - enable");
+	static TAutoConsoleVariable<bool>  BokehKarisInverse("r.DepthOfField.Bokeh.KarisInverse", false, "Karis Inverse: 0 - disable, 1 - enable");
 
-	static TAutoConsoleVariable<Float> FocalLength("r.DepthOfField.FocalLength", 200.0f, "Focal Length used in Depth of Field pass");
-	static TAutoConsoleVariable<Float> FocusDistance("r.DepthOfField.FocusDistance", 50.0f, "Focus Distance used in Depth of Field pass");
-	static TAutoConsoleVariable<Float> FStop("r.DepthOfField.FStop", 1.0f, "F-Stop used in Depth of Field pass");
+	static TAutoConsoleVariable<float> FocalLength("r.DepthOfField.FocalLength", 200.0f, "Focal Length used in Depth of Field pass");
+	static TAutoConsoleVariable<float> FocusDistance("r.DepthOfField.FocusDistance", 50.0f, "Focus Distance used in Depth of Field pass");
+	static TAutoConsoleVariable<float> FStop("r.DepthOfField.FStop", 1.0f, "F-Stop used in Depth of Field pass");
 
-	static constexpr Uint32 SMALL_BOKEH_KERNEL_RING_COUNT   = 3;
-	static constexpr Uint32 SMALL_BOKEH_KERNEL_RING_DENSITY = 5;
+	static constexpr uint32 SMALL_BOKEH_KERNEL_RING_COUNT   = 3;
+	static constexpr uint32 SMALL_BOKEH_KERNEL_RING_DENSITY = 5;
 
-	static Uint32 GetSampleCount(Uint32 ring_count, Uint32 ring_density)
+	static uint32 GetSampleCount(uint32 ring_count, uint32 ring_density)
 	{
 		return 1 + ring_density * (ring_count - 1) * ring_count / 2;
 	}
-	static std::vector<Vector2> GenerateKernel(Uint32 ring_count, Uint32 ring_density)
+	static std::vector<Vector2> GenerateKernel(uint32 ring_count, uint32 ring_density)
 	{
-		Uint32 sample_count = GetSampleCount(ring_count, ring_density);
+		uint32 sample_count = GetSampleCount(ring_count, ring_density);
 		std::vector<Vector2> kernel_data{};
 		kernel_data.reserve(sample_count);
 
-		Float radius_increment = 1.0f / ((static_cast<Float>(ring_count) - 1.0f));
-		for (Sint32 i = ring_count - 1; i >= 0; --i)
+		float radius_increment = 1.0f / ((static_cast<float>(ring_count) - 1.0f));
+		for (int32 i = ring_count - 1; i >= 0; --i)
 		{
-			Uint32 point_count = std::max(ring_density * i, 1u);
-			Float radius = static_cast<Float>(i) * radius_increment;
+			uint32 point_count = std::max(ring_density * i, 1u);
+			float radius = static_cast<float>(i) * radius_increment;
 
-			Float theta_increment = 2.0f * pi<Float> / static_cast<Float>(point_count);
-			Float offset = 0.1f * static_cast<Float>(i);
+			float theta_increment = 2.0f * pi<float> / static_cast<float>(point_count);
+			float offset = 0.1f * static_cast<float>(i);
 
-			for (Uint32 j = 0; j < point_count; ++j)
+			for (uint32 j = 0; j < point_count; ++j)
 			{
-				Float  theta = offset + static_cast<Float>(j) * theta_increment;
+				float  theta = offset + static_cast<float>(j) * theta_increment;
 				kernel_data.push_back(radius * Vector2(cos(theta), sin(theta)));
 			}
 		}
 		return kernel_data;
 	}
 
-	DepthOfFieldPass::DepthOfFieldPass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h), blur_pass(gfx)
+	DepthOfFieldPass::DepthOfFieldPass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h), blur_pass(gfx)
 	{
 		CreatePSOs();
 	}
@@ -73,12 +73,12 @@ namespace adria
 		postprocessor->SetFinalResource(RG_NAME(DepthOfFieldOutput));
 	}
 
-	void DepthOfFieldPass::OnResize(Uint32 w, Uint32 h)
+	void DepthOfFieldPass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 	}
 
-	Bool DepthOfFieldPass::IsEnabled(PostProcessor const*) const
+	bool DepthOfFieldPass::IsEnabled(PostProcessor const*) const
 	{
 		return true;
 	}
@@ -145,7 +145,7 @@ namespace adria
 
 		GfxTextureSubData data{};
 		data.data = bokeh_kernel_data.data();
-		data.row_pitch = bokeh_kernel_data.size() * sizeof(Float) * 2;
+		data.row_pitch = bokeh_kernel_data.size() * sizeof(float) * 2;
 		data.slice_pitch = 0;
 
 		GfxTextureData init_data{};
@@ -153,7 +153,7 @@ namespace adria
 		init_data.sub_count = 1;
 
 		GfxTextureDesc kernel_desc{};
-		kernel_desc.width = (Uint32)bokeh_kernel_data.size();
+		kernel_desc.width = (uint32)bokeh_kernel_data.size();
 		kernel_desc.height = 1;
 		kernel_desc.format = GfxFormat::R32_FLOAT;
 		kernel_desc.initial_state = GfxResourceState::PixelSRV;
@@ -165,14 +165,14 @@ namespace adria
 
 	void DepthOfFieldPass::CreateLargeBokehKernel()
 	{
-		Uint32 const ring_density = BokehKernelRingDensity.Get();
-		Uint32 const ring_count   = BokehKernelRingCount.Get();
+		uint32 const ring_density = BokehKernelRingDensity.Get();
+		uint32 const ring_count   = BokehKernelRingCount.Get();
 
 		std::vector<Vector2> bokeh_kernel_data = GenerateKernel(ring_count, ring_density);
 
 		GfxTextureSubData data{};
 		data.data = bokeh_kernel_data.data();
-		data.row_pitch = bokeh_kernel_data.size() * sizeof(Float) * 2;
+		data.row_pitch = bokeh_kernel_data.size() * sizeof(float) * 2;
 		data.slice_pitch = 0;
 
 		GfxTextureData init_data{};
@@ -180,7 +180,7 @@ namespace adria
 		init_data.sub_count = 1;
 
 		GfxTextureDesc kernel_desc{};
-		kernel_desc.width = (Uint32)bokeh_kernel_data.size();
+		kernel_desc.width = (uint32)bokeh_kernel_data.size();
 		kernel_desc.height = 1;
 		kernel_desc.format = GfxFormat::R32_FLOAT;
 		kernel_desc.initial_state = GfxResourceState::PixelSRV;
@@ -225,17 +225,17 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct ComputeCircleOfConfusionPassConstants
 				{
-					Uint32 depth_idx;
-					Uint32 output_idx;
-					Float camera_focal_length;
-					Float camera_focus_distance;
-					Float camera_aperture_ratio;
-					Float camera_sensor_width;
-					Float max_circle_of_confusion;
+					uint32 depth_idx;
+					uint32 output_idx;
+					float camera_focal_length;
+					float camera_focus_distance;
+					float camera_aperture_ratio;
+					float camera_sensor_width;
+					float max_circle_of_confusion;
 				} constants =
 				{
 					.depth_idx = i, .output_idx = i + 1,
@@ -285,12 +285,12 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct DownsampleCircleOfConfusionPassConstants
 				{
-					Uint32 input_idx;
-					Uint32 output_idx;
+					uint32 input_idx;
+					uint32 output_idx;
 				} constants =
 				{
 					.input_idx = i, .output_idx = i + 1,
@@ -304,16 +304,16 @@ namespace adria
 
 	void DepthOfFieldPass::AddDownsampleCircleOfConfusionPass(RenderGraph& rg)
 	{
-		static constexpr Uint32 pass_count = 4;
+		static constexpr uint32 pass_count = 4;
 
 		std::vector<RGResourceName> coc_mips(pass_count);
 		coc_mips[0] = RG_NAME_IDX(CoCDilationMip, 0);
-		for (Uint32 i = 1; i < pass_count; ++i)
+		for (uint32 i = 1; i < pass_count; ++i)
 		{
 			coc_mips[i] = RG_NAME_IDX(CoCDilationMip, i);
 
-			Uint32 mip_width = width >> i;
-			Uint32 mip_height = height >> i;
+			uint32 mip_width = width >> i;
+			uint32 mip_height = height >> i;
 
 			struct DownsampleCircleOfConfusionPassData
 			{
@@ -346,12 +346,12 @@ namespace adria
 					};
 					GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 					gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-					Uint32 const i = dst_descriptor.GetIndex();
+					uint32 const i = dst_descriptor.GetIndex();
 
 					struct DownsampleCircleOfConfusionPassConstants
 					{
-						Uint32 input_idx;
-						Uint32 output_idx;
+						uint32 input_idx;
+						uint32 output_idx;
 					} constants =
 					{
 						.input_idx = i, .output_idx = i + 1,
@@ -411,15 +411,15 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct ComputePrefilteredTextureConstants
 				{
-					Uint32 color_idx;
-					Uint32 coc_idx;
-					Uint32 coc_dilation_idx;
-					Uint32 foreground_output_idx;
-					Uint32 background_output_idx;
+					uint32 color_idx;
+					uint32 coc_idx;
+					uint32 coc_dilation_idx;
+					uint32 foreground_output_idx;
+					uint32 background_output_idx;
 				} constants =
 				{
 					.color_idx = i, 
@@ -484,18 +484,18 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct BokehFirstPassConstants
 				{
-					Uint32 color_idx;
-					Uint32 kernel_idx;
-					Uint32 coc_near_idx;
-					Uint32 coc_far_idx;
-					Uint32 output0_idx;
-					Uint32 output1_idx;
-					Uint32 sample_count;
-					Float  max_coc;
+					uint32 color_idx;
+					uint32 kernel_idx;
+					uint32 coc_near_idx;
+					uint32 coc_far_idx;
+					uint32 output0_idx;
+					uint32 output1_idx;
+					uint32 sample_count;
+					float  max_coc;
 				} constants =
 				{
 					.color_idx = i,
@@ -559,17 +559,17 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct BokehSecondPassConstants
 				{
-					Uint32 kernel_idx;
-					Uint32 coc_near_idx;
-					Uint32 coc_far_idx;
-					Uint32 output0_idx;
-					Uint32 output1_idx;
-					Uint32 sample_count;
-					Float  max_coc;
+					uint32 kernel_idx;
+					uint32 coc_near_idx;
+					uint32 coc_far_idx;
+					uint32 output0_idx;
+					uint32 output1_idx;
+					uint32 sample_count;
+					float  max_coc;
 				} constants =
 				{
 					.kernel_idx = i,
@@ -630,14 +630,14 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct ComputePostfilteredTextureConstants
 				{
-					Uint32 near_coc_idx;
-					Uint32 far_coc_idx;
-					Uint32 foreground_output_idx;
-					Uint32 background_output_idx;
+					uint32 near_coc_idx;
+					uint32 far_coc_idx;
+					uint32 foreground_output_idx;
+					uint32 background_output_idx;
 				} constants =
 				{
 					.near_coc_idx = i,
@@ -697,15 +697,15 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct CombineConstants
 				{
-					Uint32 color_idx;
-					Uint32 near_coc_idx;
-					Uint32 far_coc_idx;
-					Uint32 output_idx;
-					Float  alpha_interpolation;
+					uint32 color_idx;
+					uint32 near_coc_idx;
+					uint32 far_coc_idx;
+					uint32 output_idx;
+					float  alpha_interpolation;
 				} constants =
 				{
 					.color_idx = i,

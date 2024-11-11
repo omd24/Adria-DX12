@@ -30,16 +30,16 @@ namespace fs = std::filesystem;
 
 namespace adria
 {
-	extern Bool dump_render_graph;
+	extern bool dump_render_graph;
 
 	struct ProfilerState
 	{
-		Bool  show_average = false;
+		bool  show_average = false;
 		struct AccumulatedTimeStamp
 		{
-			Float sum;
-			Float minimum;
-			Float maximum;
+			float sum;
+			float minimum;
+			float maximum;
 
 			AccumulatedTimeStamp()
 				: sum(0.0f), minimum(FLT_MAX), maximum(0)
@@ -48,8 +48,8 @@ namespace adria
 
 		std::vector<AccumulatedTimeStamp> displayed_timestamps;
 		std::vector<AccumulatedTimeStamp> accumulating_timestamps;
-		Float64 last_reset_time = 0.0;
-		Uint32 accumulating_frame_count = 0;
+		double last_reset_time = 0.0;
+		uint32 accumulating_frame_count = 0;
 	};
 
 	Editor::Editor() = default;
@@ -96,7 +96,7 @@ namespace adria
 			reload_shaders = false;
 		}
 	}
-	Bool Editor::IsActive() const
+	bool Editor::IsActive() const
 	{
 		return gui->IsVisible();
 	}
@@ -156,59 +156,61 @@ namespace adria
 		ImGuiStyle& style = ImGui::GetStyle();
 		ImGui::StyleColorsDark(&style);
 
-		style.Alpha = 1.0f;
-		style.FrameRounding = 3.0f;
-		style.Colors[ImGuiCol_Text] = ImVec4(0.00f, 0.00f, 0.00f, 1.00f);
-		style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
-		style.Colors[ImGuiCol_WindowBg] = ImVec4(0.94f, 0.94f, 0.94f, 0.94f);
-		style.Colors[ImGuiCol_PopupBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.94f);
-		style.Colors[ImGuiCol_Border] = ImVec4(0.00f, 0.00f, 0.00f, 0.39f);
-		style.Colors[ImGuiCol_BorderShadow] = ImVec4(1.00f, 1.00f, 1.00f, 0.10f);
-		style.Colors[ImGuiCol_FrameBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.94f);
-		style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-		style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-		style.Colors[ImGuiCol_TitleBg] = ImVec4(0.96f, 0.96f, 0.96f, 1.00f);
-		style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(1.00f, 1.00f, 1.00f, 0.51f);
-		style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.82f, 0.82f, 0.82f, 1.00f);
-		style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.86f, 0.86f, 0.86f, 1.00f);
-		style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.98f, 0.98f, 0.98f, 0.53f);
-		style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.69f, 0.69f, 0.69f, 1.00f);
-		style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.59f, 0.59f, 0.59f, 1.00f);
-		style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.49f, 0.49f, 0.49f, 1.00f);
-		style.Colors[ImGuiCol_CheckMark] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-		style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.24f, 0.52f, 0.88f, 1.00f);
-		style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-		style.Colors[ImGuiCol_Button] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-		style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-		style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.06f, 0.53f, 0.98f, 1.00f);
-		style.Colors[ImGuiCol_Header] = ImVec4(0.26f, 0.59f, 0.98f, 0.31f);
-		style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
-		style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-		style.Colors[ImGuiCol_ResizeGrip] = ImVec4(1.00f, 1.00f, 1.00f, 0.50f);
-		style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-		style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
-		style.Colors[ImGuiCol_PlotLines] = ImVec4(0.39f, 0.39f, 0.39f, 1.00f);
-		style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
-		style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-		style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
-		style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+		style.FrameRounding = 0.0f;
+		style.GrabRounding = 1.0f;
+		style.WindowRounding = 0.0f;
+		style.IndentSpacing = 10.0f;
+		style.WindowPadding = ImVec2(5, 5);
+		style.FramePadding = ImVec2(2, 2);
+		style.WindowBorderSize = 1.00f;
+		style.ChildBorderSize = 1.00f;
+		style.PopupBorderSize = 1.00f;
+		style.FrameBorderSize = 1.00f;
+		style.ScrollbarSize = 20.0f;
+		style.WindowMenuButtonPosition = ImGuiDir_Right;
 
-		for (int i = 0; i <= ImGuiCol_COUNT; i++)
-		{
-			ImVec4& col = style.Colors[i];
-			Float H, S, V;
-			ImGui::ColorConvertRGBtoHSV(col.x, col.y, col.z, H, S, V);
-
-			if (S < 0.1f)
-			{
-				V = 1.0f - V;
-			}
-			ImGui::ColorConvertHSVtoRGB(H, S, V, col.x, col.y, col.z);
-			if (col.w < 1.00f)
-			{
-				col.w *= 0.9f;
-			}
-		}
+		ImVec4* colors = ImGui::GetStyle().Colors;
+		colors[ImGuiCol_Text] = ImVec4(0.85f, 0.87f, 0.91f, 0.88f);
+		colors[ImGuiCol_TextDisabled] = ImVec4(0.49f, 0.50f, 0.53f, 1.00f);
+		colors[ImGuiCol_WindowBg] = ImVec4(0.18f, 0.20f, 0.25f, 1.00f);
+		colors[ImGuiCol_ChildBg] = ImVec4(0.16f, 0.17f, 0.20f, 1.00f);
+		colors[ImGuiCol_PopupBg] = ImVec4(0.23f, 0.26f, 0.32f, 1.00f);
+		colors[ImGuiCol_Border] = ImVec4(0.14f, 0.16f, 0.19f, 1.00f);
+		colors[ImGuiCol_BorderShadow] = ImVec4(0.09f, 0.09f, 0.09f, 0.00f);
+		colors[ImGuiCol_FrameBg] = ImVec4(0.23f, 0.26f, 0.32f, 1.00f);
+		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.56f, 0.74f, 0.73f, 1.00f);
+		colors[ImGuiCol_FrameBgActive] = ImVec4(0.53f, 0.75f, 0.82f, 1.00f);
+		colors[ImGuiCol_TitleBg] = ImVec4(0.16f, 0.16f, 0.20f, 1.00f);
+		colors[ImGuiCol_TitleBgActive] = ImVec4(0.16f, 0.16f, 0.20f, 1.00f);
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.16f, 0.16f, 0.20f, 1.00f);
+		colors[ImGuiCol_MenuBarBg] = ImVec4(0.16f, 0.16f, 0.20f, 1.00f);
+		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.18f, 0.20f, 0.25f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.23f, 0.26f, 0.32f, 0.60f);
+		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.23f, 0.26f, 0.32f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.23f, 0.26f, 0.32f, 1.00f);
+		colors[ImGuiCol_CheckMark] = ImVec4(0.37f, 0.51f, 0.67f, 1.00f);
+		colors[ImGuiCol_SliderGrab] = ImVec4(0.51f, 0.63f, 0.76f, 1.00f);
+		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.37f, 0.51f, 0.67f, 1.00f);
+		colors[ImGuiCol_Button] = ImVec4(0.18f, 0.20f, 0.25f, 1.00f);
+		colors[ImGuiCol_ButtonHovered] = ImVec4(0.51f, 0.63f, 0.76f, 1.00f);
+		colors[ImGuiCol_ButtonActive] = ImVec4(0.37f, 0.51f, 0.67f, 1.00f);
+		colors[ImGuiCol_Header] = ImVec4(0.51f, 0.63f, 0.76f, 1.00f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.53f, 0.75f, 0.82f, 1.00f);
+		colors[ImGuiCol_HeaderActive] = ImVec4(0.37f, 0.51f, 0.67f, 1.00f);
+		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.56f, 0.74f, 0.73f, 1.00f);
+		colors[ImGuiCol_SeparatorActive] = ImVec4(0.53f, 0.75f, 0.82f, 1.00f);
+		colors[ImGuiCol_ResizeGrip] = ImVec4(0.53f, 0.75f, 0.82f, 0.86f);
+		colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.61f, 0.74f, 0.87f, 1.00f);
+		colors[ImGuiCol_ResizeGripActive] = ImVec4(0.37f, 0.51f, 0.67f, 1.00f);
+		colors[ImGuiCol_Tab] = ImVec4(0.18f, 0.20f, 0.25f, 1.00f);
+		colors[ImGuiCol_TabHovered] = ImVec4(0.22f, 0.24f, 0.31f, 1.00f);
+		colors[ImGuiCol_TabActive] = ImVec4(0.23f, 0.26f, 0.32f, 1.00f);
+		colors[ImGuiCol_TabUnfocused] = ImVec4(0.13f, 0.15f, 0.18f, 1.00f);
+		colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.17f, 0.19f, 0.23f, 1.00f);
+		colors[ImGuiCol_PlotHistogram] = ImVec4(0.56f, 0.74f, 0.73f, 1.00f);
+		colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.53f, 0.75f, 0.82f, 1.00f);
+		colors[ImGuiCol_TextSelectedBg] = ImVec4(0.37f, 0.51f, 0.67f, 1.00f);
+		colors[ImGuiCol_NavHighlight] = ImVec4(0.53f, 0.75f, 0.82f, 0.86f);
 	}
 	void Editor::HandleInput()
 	{
@@ -300,7 +302,7 @@ namespace adria
 				{
 					static RealRandomGenerator real(0.0f, 1.0f);
 
-					for (Sint32 i = 0; i < light_count_to_add; ++i)
+					for (int32 i = 0; i < light_count_to_add; ++i)
 					{
 						LightParameters light_params{};
 						light_params.light_data.casts_shadows = false;
@@ -327,7 +329,7 @@ namespace adria
 				{
 					static RealRandomGenerator real(0.0f, 1.0f);
 
-					for (Sint32 i = 0; i < light_count_to_add; ++i)
+					for (int32 i = 0; i < light_count_to_add; ++i)
 					{
 						LightParameters light_params{};
 						light_params.light_data.casts_shadows = false;
@@ -353,9 +355,9 @@ namespace adria
 			if (ImGui::TreeNodeEx("Ocean", 0))
 			{
 				static GridParameters ocean_params{};
-				static Sint32 tile_count[2] = { 512, 512 };
-				static Float tile_size[2] = { 40.0f, 40.0f };
-				static Float texture_scale[2] = { 20.0f, 20.0f };
+				static int32 tile_count[2] = { 512, 512 };
+				static float tile_size[2] = { 40.0f, 40.0f };
+				static float texture_scale[2] = { 20.0f, 20.0f };
 
 				ImGui::SliderInt2("Tile Count", tile_count, 32, 1024);
 				ImGui::SliderFloat2("Tile Size", tile_size, 1.0, 100.0f);
@@ -386,7 +388,7 @@ namespace adria
 			if (ImGui::TreeNodeEx("Decals", 0))
 			{
 				static DecalParameters params{};
-				static Char NAME_BUFFER[128];
+				static char NAME_BUFFER[128];
 				ImGui::InputText("Name", NAME_BUFFER, sizeof(NAME_BUFFER));
 				params.name = std::string(NAME_BUFFER);
 				ImGui::PushID(6);
@@ -454,14 +456,14 @@ namespace adria
 		if (ImGui::Begin(ICON_FA_LIST" Entities ", &visibility_flags[Flag_Entities]))
 		{
 			std::vector<entt::entity> deleted_entities{};
-			std::function<void(entt::entity, Bool)> ShowEntity;
-			ShowEntity = [&](entt::entity e, Bool first_iteration)
+			std::function<void(entt::entity, bool)> ShowEntity;
+			ShowEntity = [&](entt::entity e, bool first_iteration)
 			{
 				auto& tag = all_entities.get<Tag>(e);
 
 				ImGuiTreeNodeFlags flags = ((selected_entity == e) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 				flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-				Bool opened = ImGui::TreeNodeEx(tag.name.c_str(), flags);
+				bool opened = ImGui::TreeNodeEx(tag.name.c_str(), flags);
 
 				if (ImGui::IsItemClicked())
 				{
@@ -489,7 +491,7 @@ namespace adria
 				auto tag = engine->reg.try_get<Tag>(selected_entity);
 				if (tag)
 				{
-					Char buffer[256];
+					char buffer[256];
 					memset(buffer, 0, sizeof(buffer));
 					std::strncpy(buffer, tag->name.c_str(), sizeof(buffer));
 					if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
@@ -503,23 +505,22 @@ namespace adria
 					else if (light->type == LightType::Spot)	ImGui::Text("Spot Light");
 					else if (light->type == LightType::Point)	ImGui::Text("Point Light");
 
-					Bool changed = false;
-					Float color[3] = { light->color.x, light->color.y, light->color.z };
-					changed |= ImGui::ColorEdit3("Light Color", color);
+					float color[3] = { light->color.x, light->color.y, light->color.z };
+					ImGui::ColorEdit3("Light Color", color);
 					light->color = Vector4(color[0], color[1], color[2], 1.0f);
 
-					changed |= ImGui::SliderFloat("Light Intensity", &light->intensity, 0.0f, 50.0f);
+					ImGui::SliderFloat("Light Intensity", &light->intensity, 0.0f, 50.0f);
 
 					if (engine->reg.all_of<Material>(selected_entity))
 					{
 						auto& material = engine->reg.get<Material>(selected_entity);
-						memcpy(material.base_color, color, 3 * sizeof(Float));
+						memcpy(material.base_color, color, 3 * sizeof(float));
 					}
 
 					if (light->type == LightType::Directional || light->type == LightType::Spot)
 					{
-						Float direction[3] = { light->direction.x, light->direction.y, light->direction.z };
-						changed |= ImGui::SliderFloat3("Light direction", direction, -1.0f, 1.0f);
+						float direction[3] = { light->direction.x, light->direction.y, light->direction.z };
+						ImGui::SliderFloat3("Light direction", direction, -1.0f, 1.0f);
 						light->direction = Vector4(direction[0], direction[1], direction[2], 0.0f);
 						if (light->type == LightType::Directional)
 						{
@@ -529,10 +530,10 @@ namespace adria
 
 					if (light->type == LightType::Spot)
 					{
-						Float inner_angle = XMConvertToDegrees(acos(light->inner_cosine))
+						float inner_angle = XMConvertToDegrees(acos(light->inner_cosine))
 							, outer_angle = XMConvertToDegrees(acos(light->outer_cosine));
-						changed |= ImGui::SliderFloat("Inner Spot Angle", &inner_angle, 0.0f, 90.0f);
-						changed |= ImGui::SliderFloat("Outer Spot Angle", &outer_angle, inner_angle, 90.0f);
+						ImGui::SliderFloat("Inner Spot Angle", &inner_angle, 0.0f, 90.0f);
+						ImGui::SliderFloat("Outer Spot Angle", &outer_angle, inner_angle, 90.0f);
 
 						light->inner_cosine = cos(XMConvertToRadians(inner_angle));
 						light->outer_cosine = cos(XMConvertToRadians(outer_angle));
@@ -540,10 +541,10 @@ namespace adria
 
 					if (light->type == LightType::Point || light->type == LightType::Spot)
 					{
-						Float position[3] = { light->position.x,  light->position.y,  light->position.z };
-						changed |= ImGui::SliderFloat3("Light position", position, -300.0f, 500.0f);
+						float position[3] = { light->position.x,  light->position.y,  light->position.z };
+						ImGui::SliderFloat3("Light position", position, -300.0f, 500.0f);
 						light->position = Vector4(position[0], position[1], position[2], 1.0f);
-						changed |= ImGui::SliderFloat("Range", &light->range, 50.0f, 1000.0f);
+						ImGui::SliderFloat("Range", &light->range, 50.0f, 1000.0f);
 					}
 
 					if (engine->reg.all_of<Transform>(selected_entity))
@@ -551,11 +552,8 @@ namespace adria
 						auto& tr = engine->reg.get<Transform>(selected_entity);
 						tr.current_transform = XMMatrixTranslationFromVector(light->position);
 					}
+
 					ImGui::Checkbox("Active", &light->active);
-					if (light->active && changed)
-					{
-						editor_events.light_changed_event.Broadcast();
-					}
 
 					if (light->type == LightType::Directional)
 					{
@@ -577,6 +575,13 @@ namespace adria
 						{
 							ImGui::Checkbox("Use Cascades", &light->use_cascades);
 						}
+						ImGui::Checkbox("Screen Space Contact Shadows", &light->sscs);
+						if (light->sscs)
+						{
+							ImGui::SliderFloat("Thickness", &light->sscs_thickness, 0.0f, 1.0f);
+							ImGui::SliderFloat("Max Ray Distance", &light->sscs_max_ray_distance, 0.0f, 0.3f);
+							ImGui::SliderFloat("Max Depth Distance", &light->sscs_max_depth_distance, 0.0f, 500.0f);
+						}
 					}
 
 					ImGui::Checkbox("God Rays", &light->god_rays);
@@ -593,6 +598,7 @@ namespace adria
 					{
 						ImGui::SliderFloat("Volumetric lighting Strength", &light->volumetric_strength, 0.0f, 0.1f);
 					}
+
 					ImGui::Checkbox("Lens Flare", &light->lens_flare);
 				}
 
@@ -694,9 +700,9 @@ namespace adria
 				{
 					Matrix tr = transform->current_transform;
 					
-					Float translation[3], rotation[3], scale[3];
+					float translation[3], rotation[3], scale[3];
 					ImGuizmo::DecomposeMatrixToComponents(tr.m[0], translation, rotation, scale);
-					Bool change = ImGui::InputFloat3("Translation", translation);
+					bool change = ImGui::InputFloat3("Translation", translation);
 					change &= ImGui::InputFloat3("Rotation", rotation);
 					change &= ImGui::InputFloat3("Scale", scale);
 					ImGuizmo::RecomposeMatrixFromComponents(translation, rotation, scale, tr.m[0]);
@@ -781,10 +787,10 @@ namespace adria
 		if (ImGui::Begin(ICON_FA_CAMERA" Camera", &visibility_flags[Flag_Camera]))
 		{
 			Vector3 cam_pos = camera.Position();
-			ImGui::SliderFloat3("Position", (Float*)&cam_pos, 0.0f, 2000.0f);
+			ImGui::SliderFloat3("Position", (float*)&cam_pos, 0.0f, 2000.0f);
 			camera.SetPosition(cam_pos);
-			Float near_plane = camera.Near(), far_plane = camera.Far();
-			Float fov = camera.Fov();
+			float near_plane = camera.Near(), far_plane = camera.Far();
+			float fov = camera.Fov();
 			ImGui::SliderFloat("Near", &near_plane, 10.0f, 3000.0f);
 			ImGui::SliderFloat("Far", &far_plane, 0.001f, 2.0f);
 			ImGui::SliderFloat("FOV", &fov, 0.01f, 1.5707f);
@@ -792,6 +798,7 @@ namespace adria
 			camera.SetFov(fov);
 			Vector3 look_at = camera.Forward();
 			ImGui::Text("Look Vector: (%f,%f,%f)", look_at.x, look_at.y, look_at.z);
+			
 		}
 		ImGui::End();
 	}
@@ -804,7 +811,7 @@ namespace adria
 				if (ImGui::BeginMenu("Lighting Path"))
 				{
 					LightingPathType current_path = engine->renderer->GetLightingPath();
-					auto AddMenuItem = [&](LightingPathType lighting_path, Char const* item_name)
+					auto AddMenuItem = [&](LightingPathType lighting_path, char const* item_name)
 					{
 						if (ImGui::MenuItem(item_name, nullptr, lighting_path == current_path)) { engine->renderer->SetLightingPath(lighting_path); }
 					};
@@ -819,7 +826,7 @@ namespace adria
 				if (ImGui::BeginMenu("Renderer Output"))
 				{
 					RendererOutput current_output = engine->renderer->GetRendererOutput();
-					auto AddMenuItem = [&](RendererOutput output, Char const* item_name)
+					auto AddMenuItem = [&](RendererOutput output, char const* item_name)
 					{
 						if (ImGui::MenuItem(item_name, nullptr, output == current_output)) { engine->renderer->SetRendererOutput(output); }
 					};
@@ -882,7 +889,7 @@ namespace adria
 			if (ImGuizmo::IsUsing())
 			{
 				Matrix tr = entity_transform.current_transform;
-				Bool change = ImGuizmo::Manipulate(camera_view.m[0], camera_proj.m[0], gizmo_op, ImGuizmo::LOCAL, tr.m[0]);
+				bool change = ImGuizmo::Manipulate(camera_view.m[0], camera_proj.m[0], gizmo_op, ImGuizmo::LOCAL, tr.m[0]);
 				entity_transform.current_transform = tr;
 			}
 		}
@@ -918,7 +925,7 @@ namespace adria
 
 		if (ImGui::Begin(ICON_FA_GEAR" Settings", &visibility_flags[Flag_Settings]))
 		{
-			for (Uint32 i = 0; i < GUICommandGroup_Count; ++i)
+			for (uint32 i = 0; i < GUICommandGroup_Count; ++i)
 			{
 				if (i != GUICommandGroup_None)
 				{
@@ -929,7 +936,7 @@ namespace adria
 				{
 					subgrouped_commands[cmd->subgroup].push_back(cmd);
 				}
-				for (Uint32 i = 0; i < GUICommandSubGroup_Count; ++i)
+				for (uint32 i = 0; i < GUICommandSubGroup_Count; ++i)
 				{
 					if (subgrouped_commands[i].empty()) continue;
 
@@ -963,34 +970,34 @@ namespace adria
 				system("start ..\\External\\tracy\\Tracy-0.9.1\\Tracy.exe");
 			}
 #endif
-			static Bool show_profiling = true;
+			static bool show_profiling = true;
 			ImGui::Checkbox("Show Profiling Results", &show_profiling);
 			if (show_profiling)
 			{
-				static constexpr Uint64 NUM_FRAMES = 128;
-				static constexpr Sint32 FRAME_TIME_GRAPH_MAX_FPS[] = { 800, 240, 120, 90, 65, 45, 30, 15, 10, 5, 4, 3, 2, 1 };
+				static constexpr uint64 NUM_FRAMES = 128;
+				static constexpr int32 FRAME_TIME_GRAPH_MAX_FPS[] = { 800, 240, 120, 90, 65, 45, 30, 15, 10, 5, 4, 3, 2, 1 };
 
 				static ProfilerState state{};
-				static Float FrameTimeArray[NUM_FRAMES] = { 0 };
-				static Float RecentHighestFrameTime = 0.0f;
-				static Float FrameTimeGraphMaxValues[ARRAYSIZE(FRAME_TIME_GRAPH_MAX_FPS)] = { 0 };
-				for (Uint64 i = 0; i < ARRAYSIZE(FrameTimeGraphMaxValues); ++i) { FrameTimeGraphMaxValues[i] = 1000.f / FRAME_TIME_GRAPH_MAX_FPS[i]; }
+				static float FrameTimeArray[NUM_FRAMES] = { 0 };
+				static float RecentHighestFrameTime = 0.0f;
+				static float FrameTimeGraphMaxValues[ARRAYSIZE(FRAME_TIME_GRAPH_MAX_FPS)] = { 0 };
+				for (uint64 i = 0; i < ARRAYSIZE(FrameTimeGraphMaxValues); ++i) { FrameTimeGraphMaxValues[i] = 1000.f / FRAME_TIME_GRAPH_MAX_FPS[i]; }
 
 				std::vector<GfxTimestamp> time_stamps = g_GfxProfiler.GetResults();
 				FrameTimeArray[NUM_FRAMES - 1] = 1000.0f / io.Framerate;
-				for (Uint32 i = 0; i < NUM_FRAMES - 1; i++) FrameTimeArray[i] = FrameTimeArray[i + 1];
+				for (uint32 i = 0; i < NUM_FRAMES - 1; i++) FrameTimeArray[i] = FrameTimeArray[i + 1];
 				RecentHighestFrameTime = std::max(RecentHighestFrameTime, FrameTimeArray[NUM_FRAMES - 1]);
 
-				Float frame_time_ms = FrameTimeArray[NUM_FRAMES - 1];
-				Sint32 const fps = static_cast<Sint32>(1000.0f / frame_time_ms);
+				float frame_time_ms = FrameTimeArray[NUM_FRAMES - 1];
+				int32 const fps = static_cast<int32>(1000.0f / frame_time_ms);
 				ImGui::Text("FPS        : %d (%.2f ms)", fps, frame_time_ms);
 				if (ImGui::CollapsingHeader("Timings", ImGuiTreeNodeFlags_DefaultOpen))
 				{
 					ImGui::Checkbox("Show Avg/Min/Max", &state.show_average);
 					ImGui::Spacing();
 
-					Uint64 max_i = 0;
-					for (Uint64 i = 0; i < ARRAYSIZE(FrameTimeGraphMaxValues); ++i)
+					uint64 max_i = 0;
+					for (uint64 i = 0; i < ARRAYSIZE(FrameTimeGraphMaxValues); ++i)
 					{
 						if (RecentHighestFrameTime < FrameTimeGraphMaxValues[i])
 						{
@@ -1000,29 +1007,29 @@ namespace adria
 					}
 					ImGui::PlotLines("", FrameTimeArray, NUM_FRAMES, 0, "GPU frame time (ms)", 0.0f, FrameTimeGraphMaxValues[max_i], ImVec2(0, 80));
 
-					constexpr Uint32 avg_timestamp_update_interval = 1000;
+					constexpr uint32 avg_timestamp_update_interval = 1000;
 					static auto MillisecondsNow = []()
 					{
 						static LARGE_INTEGER s_frequency;
 						static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
-						Float64 milliseconds = 0;
+						double milliseconds = 0;
 						if (s_use_qpc)
 						{
 							LARGE_INTEGER now;
 							QueryPerformanceCounter(&now);
-							milliseconds = Float64(1000.0 * now.QuadPart) / s_frequency.QuadPart;
+							milliseconds = double(1000.0 * now.QuadPart) / s_frequency.QuadPart;
 						}
-						else milliseconds = Float64(GetTickCount64());
+						else milliseconds = double(GetTickCount64());
 						return milliseconds;
 					};
-					const Float64 current_time = MillisecondsNow();
+					const double current_time = MillisecondsNow();
 
-					Bool reset_accumulating_state = false;
+					bool reset_accumulating_state = false;
 					if ((state.accumulating_frame_count > 1) &&
 						((current_time - state.last_reset_time) > avg_timestamp_update_interval))
 					{
 						std::swap(state.displayed_timestamps, state.accumulating_timestamps);
-						for (Uint32 i = 0; i < state.displayed_timestamps.size(); i++)
+						for (uint32 i = 0; i < state.displayed_timestamps.size(); i++)
 						{
 							state.displayed_timestamps[i].sum /= state.accumulating_frame_count;
 						}
@@ -1038,11 +1045,11 @@ namespace adria
 						state.accumulating_frame_count = 0;
 					}
 
-					Float total_time_ms = 0.0f;
+					float total_time_ms = 0.0f;
 					ImGui::BeginTable("Profiler", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_RowBg);
 					ImGui::TableSetupColumn("Pass");
 					ImGui::TableSetupColumn("Time");
-					for (Uint64 i = 0; i < time_stamps.size(); i++)
+					for (uint64 i = 0; i < time_stamps.size(); i++)
 					{
 						ImGui::TableNextRow();
 
@@ -1065,8 +1072,8 @@ namespace adria
 						
 							ProfilerState::AccumulatedTimeStamp* accumulating_timestamp = &state.accumulating_timestamps[i];
 							accumulating_timestamp->sum += time_stamps[i].time_in_ms;
-							accumulating_timestamp->minimum = std::min<Float>(accumulating_timestamp->minimum, time_stamps[i].time_in_ms);
-							accumulating_timestamp->maximum = std::max<Float>(accumulating_timestamp->maximum, time_stamps[i].time_in_ms);
+							accumulating_timestamp->minimum = std::min<float>(accumulating_timestamp->minimum, time_stamps[i].time_in_ms);
+							accumulating_timestamp->maximum = std::max<float>(accumulating_timestamp->maximum, time_stamps[i].time_in_ms);
 						}
 						total_time_ms += time_stamps[i].time_in_ms;
 					}
@@ -1075,12 +1082,12 @@ namespace adria
 					state.accumulating_frame_count++;
 				}
 			}
-			static Bool display_vram_usage = false;
+			static bool display_vram_usage = false;
 			ImGui::Checkbox("Display VRAM Usage", &display_vram_usage);
 			if (display_vram_usage)
 			{
 				GPUMemoryUsage vram = gfx->GetMemoryUsage();
-				Float const ratio = vram.usage * 1.0f / vram.budget;
+				float const ratio = vram.usage * 1.0f / vram.budget;
 				std::string vram_display_string = "VRAM usage: " + std::to_string(vram.usage / 1024 / 1024) + "MB / " + std::to_string(vram.budget / 1024 / 1024) + "MB\n";
 				if (ratio >= 0.9f && ratio <= 1.0f) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 0, 255));
 				else if (ratio > 1.0f) ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
@@ -1115,7 +1122,7 @@ namespace adria
 					Sphere
 				};
 				static int current_debug_renderer_primitive = 0;
-				static Float debug_color[4] = { 0.0f,0.0f, 0.0f, 1.0f };
+				static float debug_color[4] = { 0.0f,0.0f, 0.0f, 1.0f };
 				ImGui::Combo("Debug Renderer Primitive", &current_debug_renderer_primitive, "Line\0Ray\0Box\0Sphere\0", 4);
 				ImGui::ColorEdit3("Debug Color", debug_color);
 
@@ -1124,8 +1131,8 @@ namespace adria
 				{
 				case Line:
 				{
-					static Float start[3] = { 0.0f };
-					static Float end[3] = { 0.0f };
+					static float start[3] = { 0.0f };
+					static float end[3] = { 0.0f };
 					ImGui::InputFloat3("Line Start", start);
 					ImGui::InputFloat3("Line End", end);
 					if (ImGui::Button("Add")) g_DebugRenderer.AddLine(Vector3(start), Vector3(end), Color(debug_color));
@@ -1133,8 +1140,8 @@ namespace adria
 				break;
 				case Ray:
 				{
-					static Float origin[3] = { 0.0f };
-					static Float dir[3] = { 0.0f };
+					static float origin[3] = { 0.0f };
+					static float dir[3] = { 0.0f };
 					ImGui::InputFloat3("Ray Origin", origin);
 					ImGui::InputFloat3("Ray Direction", dir);
 					if (ImGui::Button("Add")) g_DebugRenderer.AddRay(Vector3(origin), Vector3(dir), Color(debug_color));
@@ -1142,9 +1149,9 @@ namespace adria
 				break;
 				case Box:
 				{
-					static Float center[3] = { 0.0f };
-					static Float extents[3] = { 0.0f };
-					static Bool wireframe = false;
+					static float center[3] = { 0.0f };
+					static float extents[3] = { 0.0f };
+					static bool wireframe = false;
 					ImGui::InputFloat3("Box Center", center);
 					ImGui::InputFloat3("Box Extents", extents);
 					ImGui::Checkbox("Wireframe", &wireframe);
@@ -1153,9 +1160,9 @@ namespace adria
 				break;
 				case Sphere:
 				{
-					static Float center[3] = { 0.0f };
-					static Float radius = 1.0f;
-					static Bool wireframe = false;
+					static float center[3] = { 0.0f };
+					static float radius = 1.0f;
+					static bool wireframe = false;
 					ImGui::InputFloat3("Sphere Center", center);
 					ImGui::InputFloat("Sphere Radius", &radius);
 					ImGui::Checkbox("Wireframe", &wireframe);
@@ -1177,7 +1184,7 @@ namespace adria
 
 			if (ImGui::TreeNode("Screenshot"))
 			{
-				static Char filename[32] = "screenshot";
+				static char filename[32] = "screenshot";
 				ImGui::InputText("File name", filename, sizeof(filename));
 				if (ImGui::Button("Take Screenshot"))
 				{
@@ -1188,7 +1195,7 @@ namespace adria
 
 			if (ImGui::TreeNode("PIX"))
 			{
-				static Char capture_name[32] = { 'a', 'd', 'r', 'i', 'a' };
+				static char capture_name[32] = { 'a', 'd', 'r', 'i', 'a' };
 				ImGui::InputText("Capture name", capture_name, sizeof(capture_name));
 
 				static int frame_count = 1;
@@ -1206,11 +1213,11 @@ namespace adria
 			{
 				struct VoidPointerHash
 				{
-					Uint64 operator()(void const* ptr) const { return reinterpret_cast<Uint64>(ptr); }
+					uint64 operator()(void const* ptr) const { return reinterpret_cast<uint64>(ptr); }
 				};
 				static std::unordered_map<void const*, GfxDescriptor, VoidPointerHash> debug_srv_map;
 
-				for (Sint32 i = 0; i < debug_textures.size(); ++i)
+				for (int32 i = 0; i < debug_textures.size(); ++i)
 				{
 					ImGui::PushID(i);
 					auto& debug_texture = debug_textures[i];
@@ -1227,10 +1234,10 @@ namespace adria
 						debug_srv_map[debug_texture.gfx_texture] = debug_srv_cpu;
 						gfx->CopyDescriptors(1, debug_srv_gpu, debug_srv_cpu);
 					}
-					Uint32 width = debug_texture.gfx_texture->GetDesc().width;
-					Uint32 height = debug_texture.gfx_texture->GetDesc().height;
-					Float window_width = ImGui::GetWindowWidth();
-					ImGui::Image((ImTextureID)static_cast<D3D12_GPU_DESCRIPTOR_HANDLE>(debug_srv_gpu).ptr, ImVec2(window_width * 0.9f, window_width * 0.9f * (Float)height / width));
+					uint32 width = debug_texture.gfx_texture->GetDesc().width;
+					uint32 height = debug_texture.gfx_texture->GetDesc().height;
+					float window_width = ImGui::GetWindowWidth();
+					ImGui::Image((ImTextureID)static_cast<D3D12_GPU_DESCRIPTOR_HANDLE>(debug_srv_gpu).ptr, ImVec2(window_width * 0.9f, window_width * 0.9f * (float)height / width));
 					ImGui::PopID();
 				}
 				ImGui::TreePop();

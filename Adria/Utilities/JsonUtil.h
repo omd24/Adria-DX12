@@ -32,7 +32,7 @@ namespace adria
 		template<typename T>
 		ADRIA_NODISCARD T FindOr(std::string const& name, std::type_identity_t<T> const& default_value)
 		{
-			Bool has_field = _json.contains(name);
+			bool has_field = _json.contains(name);
 			if (!has_field) return default_value;
 			else
 			{
@@ -44,9 +44,9 @@ namespace adria
 		}
 
 		template<typename T>
-		ADRIA_MAYBE_UNUSED Bool Find(std::string const& name, std::type_identity_t<T>& value)
+		ADRIA_MAYBE_UNUSED bool Find(std::string const& name, std::type_identity_t<T>& value)
 		{
-			Bool has_field = _json.contains(name);
+			bool has_field = _json.contains(name);
 			if (!has_field) return false;
 			else
 			{
@@ -55,16 +55,16 @@ namespace adria
 			}
 		}
 
-		template<typename T, Uint64 N>
-		ADRIA_MAYBE_UNUSED Bool FindArray(std::string const& name, T(&arr)[N])
+		template<typename T, uint64 N>
+		ADRIA_MAYBE_UNUSED bool FindArray(std::string const& name, T(&arr)[N])
 		{
-			Bool has_field = _json.contains(name);
+			bool has_field = _json.contains(name);
 			if (has_field)
 			{
 				json const key_value_json = _json[name];
 				if (key_value_json.is_array() && key_value_json.size() == N)
 				{
-					for (Uint64 i = 0; i < N; ++i)
+					for (uint64 i = 0; i < N; ++i)
 					{
 						if (!CheckValueTypeAndAssign(key_value_json[i], arr[i])) return false;
 					}
@@ -75,9 +75,9 @@ namespace adria
 		}
 
 		template<typename T>
-		ADRIA_MAYBE_UNUSED Bool FindDynamicArray(std::string const& name, std::vector<T>& arr)
+		ADRIA_MAYBE_UNUSED bool FindDynamicArray(std::string const& name, std::vector<T>& arr)
 		{
-			Bool has_field = _json.contains(name);
+			bool has_field = _json.contains(name);
 			if (has_field)
 			{
 				json const key_value_json = _json[name];
@@ -85,7 +85,7 @@ namespace adria
 				{
 					arr.clear();
 					arr.resize(key_value_json.size());
-					for (Uint64 i = 0; i < key_value_json.size(); ++i)
+					for (uint64 i = 0; i < key_value_json.size(); ++i)
 					{
 						if (!CheckValueTypeAndAssign(key_value_json[i], arr[i])) return false;
 					}
@@ -101,7 +101,7 @@ namespace adria
 	private:
 
 		template<typename T>
-		static constexpr Bool CheckValueTypeAndAssign(json const& key_value_json, T& return_value)
+		static constexpr bool CheckValueTypeAndAssign(json const& key_value_json, T& return_value)
 		{
 			ADRIA_ASSERT(!key_value_json.is_null());
 			if (key_value_json.is_string())
@@ -115,37 +115,37 @@ namespace adria
 			}
 			else if (key_value_json.is_number_float())
 			{
-				if constexpr (std::is_same_v<std::decay_t<T>, Float>)
+				if constexpr (std::is_same_v<std::decay_t<T>, float>)
 				{
-					return_value = key_value_json.get<Float>();
+					return_value = key_value_json.get<float>();
 					return true;
 				}
-				else if constexpr (std::is_same_v<std::decay_t<T>, Float64>)
+				else if constexpr (std::is_same_v<std::decay_t<T>, double>)
 				{
-					return_value = key_value_json.get<Float64>();
+					return_value = key_value_json.get<double>();
 					return true;
 				}
 				else return false;
 			}
 			else if (key_value_json.is_number_unsigned())
 			{
-				if constexpr (std::is_same_v<std::decay_t<T>, Uint64>)
+				if constexpr (std::is_same_v<std::decay_t<T>, uint64>)
 				{
-					return_value = key_value_json.get<Uint64>();
+					return_value = key_value_json.get<uint64>();
 					return true;
 				}
-				else if constexpr (std::is_same_v<std::decay_t<T>, Uint32>)
+				else if constexpr (std::is_same_v<std::decay_t<T>, uint32>)
 				{
-					return_value = key_value_json.get<Uint32>();
+					return_value = key_value_json.get<uint32>();
 					return true;
 				}
 				else return false;
 			}
 			else if (key_value_json.is_boolean())
 			{
-				if constexpr (std::is_same_v<std::decay_t<T>, Bool>)
+				if constexpr (std::is_same_v<std::decay_t<T>, bool>)
 				{
-					return_value = key_value_json.get<Bool>();
+					return_value = key_value_json.get<bool>();
 					return true;
 				}
 				else return false;

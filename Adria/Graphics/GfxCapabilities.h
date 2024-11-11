@@ -5,25 +5,25 @@ namespace adria
 {
 	class GfxDevice;
 
-	enum class RayTracingSupport : Uint8
+	enum class RayTracingSupport : uint8
 	{
 		TierNotSupported,
 		Tier1_0,
 		Tier1_1
 	};
-	enum class VSRSupport : Uint8
+	enum class VSRSupport : uint8
 	{
 		TierNotSupported,
 		Tier1,
 		Tier2
 	};
-	enum class MeshShaderSupport : Uint8
+	enum class MeshShaderSupport : uint8
 	{
 		TierNotSupported,
 		Tier1
 	};
 
-	enum class WorkGraphSupport : Uint8
+	enum class WorkGraphSupport : uint8
 	{
 		TierNotSupported,
 		Tier1_0
@@ -32,53 +32,53 @@ namespace adria
 	class GfxCapabilities
 	{
 	public:
-		Bool Initialize(GfxDevice* gfx);
+		bool Initialize(GfxDevice* gfx);
 
-		Bool SupportsRayTracing() const
+		bool SupportsRayTracing() const
 		{
 			return CheckRayTracingSupport(RayTracingSupport::Tier1_0);
 		}
-		Bool SupportsMeshShaders() const
+		bool SupportsMeshShaders() const
 		{
 			return CheckMeshShaderSupport(MeshShaderSupport::Tier1);
 		}
-		Bool SupportsVSR() const
+		bool SupportsVSR() const
 		{
 			return CheckVSRSupport(VSRSupport::Tier1);
 		}
-		Bool SupportsWorkGraphs() const
+		bool SupportsWorkGraphs() const
 		{
 			return CheckWorkGraphSupport(WorkGraphSupport::Tier1_0);
 		}
 
-		Bool CheckRayTracingSupport(RayTracingSupport rts) const
+		bool CheckRayTracingSupport(RayTracingSupport rts) const
 		{
 			return ray_tracing_support >= rts;
 		}
-		Bool CheckVSRSupport(VSRSupport vsrs) const
+		bool CheckVSRSupport(VSRSupport vsrs) const
 		{
 			return vsr_support >= vsrs;
 		}
-		Bool CheckMeshShaderSupport(MeshShaderSupport mss) const
+		bool CheckMeshShaderSupport(MeshShaderSupport mss) const
 		{
 			return mesh_shader_support >= mss;
 		}
-		Bool CheckWorkGraphSupport(WorkGraphSupport wgs) const
+		bool CheckWorkGraphSupport(WorkGraphSupport wgs) const
 		{
 			return work_graph_support >= wgs;
 		}
 
-		Bool SupportsShaderModel(GfxShaderModel sm) const
+		bool SupportsShaderModel(GfxShaderModel sm) const
 		{
 			return shader_model >= sm;
 		}
-		Bool SupportsEnhancedBarriers() const 
+		bool SupportsEnhancedBarriers() const 
 		{
 			return enhanced_barriers_supported;
 		}
 
-		Bool SupportsAdditionalShadingRates() const { return additional_shading_rates_supported; }
-		Uint32 GetShadingRateImageTileSize() const { return shading_rate_image_tile_size; }
+		bool SupportsAdditionalShadingRates() const { return additional_shading_rates_supported; }
+		uint32 GetShadingRateImageTileSize() const { return shading_rate_image_tile_size; }
 
 	private:
 		
@@ -87,9 +87,9 @@ namespace adria
 		MeshShaderSupport mesh_shader_support = MeshShaderSupport::TierNotSupported;
 		WorkGraphSupport work_graph_support = WorkGraphSupport::TierNotSupported;
 		GfxShaderModel shader_model = SM_Unknown;
-		Bool enhanced_barriers_supported = false;
+		bool enhanced_barriers_supported = false;
 
-		Bool additional_shading_rates_supported = false;
-		Uint32 shading_rate_image_tile_size = 0;
+		bool additional_shading_rates_supported = false;
+		uint32 shading_rate_image_tile_size = 0;
 	};
 }

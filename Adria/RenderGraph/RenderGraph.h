@@ -68,7 +68,7 @@ namespace adria
 		RGBlackboard const& GetBlackboard() const { return blackboard; }
 		RGBlackboard& GetBlackboard() { return blackboard; }
 
-		void Dump(Char const* graph_file_name);
+		void Dump(char const* graph_file_name);
 		void DumpDebugData();
 
 	private:
@@ -80,8 +80,8 @@ namespace adria
 		std::vector<std::unique_ptr<RGTexture>> textures;
 		std::vector<std::unique_ptr<RGBuffer>> buffers;
 
-		std::vector<std::vector<Uint64>> adjacency_lists;
-		std::vector<Uint64> topologically_sorted_passes;
+		std::vector<std::vector<uint64>> adjacency_lists;
+		std::vector<uint64> topologically_sorted_passes;
 		std::vector<DependencyLevel> dependency_levels;
 
 		std::unordered_map<RGResourceName, RGTextureId> texture_name_id_map;
@@ -101,16 +101,16 @@ namespace adria
 		void BuildDependencyLevels();
 		void CullPasses();
 		void CalculateResourcesLifetime();
-		void DepthFirstSearch(Uint64 i, std::vector<Bool>& visited, std::vector<Uint64>& sort);
+		void DepthFirstSearch(uint64 i, std::vector<bool>& visited, std::vector<uint64>& sort);
 		
 		RGTextureId DeclareTexture(RGResourceName name, RGTextureDesc const& desc);
 		RGBufferId DeclareBuffer(RGResourceName name, RGBufferDesc const& desc);
 
-		Bool IsTextureDeclared(RGResourceName);
-		Bool IsBufferDeclared(RGResourceName);
+		bool IsTextureDeclared(RGResourceName);
+		bool IsBufferDeclared(RGResourceName);
 
-		Bool IsValidTextureHandle(RGTextureId) const;
-		Bool IsValidBufferHandle(RGBufferId) const;
+		bool IsValidTextureHandle(RGTextureId) const;
+		bool IsValidBufferHandle(RGBufferId) const;
 
 		RGTexture* GetRGTexture(RGTextureId) const;
 		RGBuffer* GetRGBuffer(RGBufferId) const;

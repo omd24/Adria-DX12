@@ -33,7 +33,7 @@ namespace adria
 	static TAutoConsoleVariable<int>  LightingPath("r.LightingPath", 0, "0 - Deferred, 1 - Tiled Deferred, 2 - Clustered Deferred, 3 - Path Tracing");
 	static TAutoConsoleVariable<int>  VolumetricPath("r.VolumetricPath", 1, "0 - None, 1 - 2D Raymarching, 2 - Fog Volume");
 
-	Renderer::Renderer(entt::registry& reg, GfxDevice* gfx, Uint32 width, Uint32 height) : reg(reg), gfx(gfx), resource_pool(gfx),
+	Renderer::Renderer(entt::registry& reg, GfxDevice* gfx, uint32 width, uint32 height) : reg(reg), gfx(gfx), resource_pool(gfx),
 		accel_structure(gfx), camera(nullptr), display_width(width), display_height(height), render_width(width), render_height(height),
 		backbuffer_count(gfx->GetBackbufferCount()), backbuffer_index(gfx->GetBackbufferIndex()), final_texture(nullptr),
 		frame_cbuffer(gfx, backbuffer_count), gpu_driven_renderer(reg, gfx, width, height),
@@ -96,7 +96,7 @@ namespace adria
 		g_GfxProfiler.NewFrame();
 		GfxTracyProfiler::NewFrame();
 	}
-	void Renderer::Update(Float dt)
+	void Renderer::Update(float dt)
 	{
 		shadow_renderer.SetupShadows(camera);
 		UpdateSceneBuffers();
@@ -146,7 +146,7 @@ namespace adria
 		GUI();
 	}
 
-	void Renderer::OnResize(Uint32 w, Uint32 h)
+	void Renderer::OnResize(uint32 w, uint32 h)
 	{
 		if (display_width != w || display_height != h)
 		{
@@ -158,7 +158,7 @@ namespace adria
 			renderer_output_pass.OnResize(w, h);
 		}
 	}
-	void Renderer::OnRenderResolutionChanged(Uint32 w, Uint32 h)
+	void Renderer::OnRenderResolutionChanged(uint32 w, uint32 h)
 	{
 		if (render_width != w || render_height != h)
 		{
@@ -197,25 +197,20 @@ namespace adria
 		gfxcommon::Initialize(gfx);
 		g_TextureManager.OnSceneInitialized();
 	}
-	void Renderer::OnRightMouseClicked(Sint32 x, Sint32 y)
+	void Renderer::OnRightMouseClicked(int32 x, int32 y)
 	{
 		update_picking_data = true;
 	}
-	void Renderer::OnTakeScreenshot(Char const* filename)
+	void Renderer::OnTakeScreenshot(char const* filename)
 	{
 		screenshot_name = filename;
 		if (screenshot_name.empty())
 		{
-			static Uint32 screenshot_index = 0;
+			static uint32 screenshot_index = 0;
 			screenshot_name = "adria_screenshot";
 			screenshot_name += std::to_string(screenshot_index++);
 		}
 		take_screenshot = true;
-	}
-
-	void Renderer::OnLightChanged()
-	{
-		path_tracer.Reset();
 	}
 
 	void Renderer::CreateSizeDependentResources()
@@ -249,7 +244,7 @@ namespace adria
 		reg.clear<Batch>();
 
 		std::vector<LightGPU> hlsl_lights{};
-		Uint32 light_index = 0;
+		uint32 light_index = 0;
 		Matrix light_transform = lighting_path == LightingPathType::PathTracing ? Matrix::Identity : camera->View();
 		for (auto light_entity : reg.view<Light>())
 		{
@@ -262,7 +257,7 @@ namespace adria
 			hlsl_light.position = Vector4::Transform(light.position, light_transform);
 			hlsl_light.direction = Vector4::Transform(light.direction, light_transform);
 			hlsl_light.range = light.range;
-			hlsl_light.type = static_cast<Sint32>(light.type);
+			hlsl_light.type = static_cast<int32>(light.type);
 			hlsl_light.inner_cosine = light.inner_cosine;
 			hlsl_light.outer_cosine = light.outer_cosine;
 			hlsl_light.volumetric = light.volumetric;
@@ -278,7 +273,7 @@ namespace adria
 		std::vector<MeshGPU> meshes;
 		std::vector<InstanceGPU> instances;
 		std::vector<MaterialGPU> materials;
-		Uint32 instanceID = 0;
+		uint32 instanceID = 0;
 
 		for (auto mesh_entity : reg.view<Mesh>())
 		{
@@ -306,8 +301,8 @@ namespace adria
 
 				InstanceGPU& instance_hlsl = instances.emplace_back();
 				instance_hlsl.instance_id = instanceID;
-				instance_hlsl.material_idx = static_cast<Uint32>(materials.size() + submesh.material_index);
-				instance_hlsl.mesh_index = static_cast<Uint32>(meshes.size() + instance.submesh_index);
+				instance_hlsl.material_idx = static_cast<uint32>(materials.size() + submesh.material_index);
+				instance_hlsl.mesh_index = static_cast<uint32>(meshes.size() + instance.submesh_index);
 				instance_hlsl.world_matrix = instance.world_transform;
 				instance_hlsl.inverse_world_matrix = XMMatrixInverse(nullptr, instance.world_transform);
 				instance_hlsl.bb_origin = submesh.bounding_box.Center;
@@ -334,10 +329,10 @@ namespace adria
 			for (auto const& material : mesh.materials)
 			{
 				MaterialGPU& material_hlsl = materials.emplace_back();
-				material_hlsl.diffuse_idx = (Uint32)material.albedo_texture;
-				material_hlsl.normal_idx = (Uint32)material.normal_texture;
-				material_hlsl.roughness_metallic_idx = (Uint32)material.metallic_roughness_texture;
-				material_hlsl.emissive_idx = (Uint32)material.emissive_texture;
+				material_hlsl.diffuse_idx = (uint32)material.albedo_texture;
+				material_hlsl.normal_idx = (uint32)material.normal_texture;
+				material_hlsl.roughness_metallic_idx = (uint32)material.metallic_roughness_texture;
+				material_hlsl.emissive_idx = (uint32)material.emissive_texture;
 				material_hlsl.base_color_factor = Vector3(material.base_color);
 				material_hlsl.emissive_factor = material.emissive_factor;
 				material_hlsl.metallic_factor = material.metallic_factor;
@@ -363,19 +358,19 @@ namespace adria
 		CopyBuffer(instances, scene_buffers[SceneBuffer_Instance]);
 		CopyBuffer(materials, scene_buffers[SceneBuffer_Material]);
 
-		Uint64 count = reg.size();
+		uint64 count = reg.size();
 	}
 
-	void Renderer::UpdateFrameConstants(Float dt)
+	void Renderer::UpdateFrameConstants(float dt)
 	{
-		static Float total_time = 0.0f;
+		static float total_time = 0.0f;
 		total_time += dt;
 		rain_pass.Update(dt);
 
 		camera_jitter = Vector2(0.0f, 0.0f);
 		if (postprocessor.NeedsJitter()) camera_jitter = camera->Jitter(gfx->GetFrameIndex());
 
-		if (camera->IsChanged()) path_tracer.Reset();
+		if (camera->ViewProj() != frame_cbuf_data.prev_view_projection) path_tracer.Reset();
 		frame_cbuf_data.camera_near = camera->Near();
 		frame_cbuf_data.camera_far = camera->Far();
 		frame_cbuf_data.camera_position = camera->Position();
@@ -389,20 +384,20 @@ namespace adria
 		frame_cbuf_data.reprojection = frame_cbuf_data.inverse_view_projection * frame_cbuf_data.prev_view_projection;
 		frame_cbuf_data.camera_jitter_x = (camera_jitter.x * 2.0f) / render_width;
 		frame_cbuf_data.camera_jitter_y = (camera_jitter.y * 2.0f) / render_height;
-		frame_cbuf_data.display_resolution_x = (Float)display_width;
-		frame_cbuf_data.display_resolution_y = (Float)display_height;
-		frame_cbuf_data.render_resolution_x = (Float)render_width;
-		frame_cbuf_data.render_resolution_y = (Float)render_height;
+		frame_cbuf_data.display_resolution_x = (float)display_width;
+		frame_cbuf_data.display_resolution_y = (float)display_height;
+		frame_cbuf_data.render_resolution_x = (float)render_width;
+		frame_cbuf_data.render_resolution_y = (float)render_height;
 		frame_cbuf_data.delta_time = dt;
 		frame_cbuf_data.total_time = total_time;
 		frame_cbuf_data.frame_count = gfx->GetFrameIndex();
 		frame_cbuf_data.mouse_normalized_coords_x = (viewport_data.mouse_position_x - viewport_data.scene_viewport_pos_x) / viewport_data.scene_viewport_size_x;
 		frame_cbuf_data.mouse_normalized_coords_y = (viewport_data.mouse_position_y - viewport_data.scene_viewport_pos_y) / viewport_data.scene_viewport_size_y;
 		frame_cbuf_data.env_map_idx = sky_pass.GetSkyIndex();
-		frame_cbuf_data.meshes_idx = (Sint32)scene_buffers[SceneBuffer_Mesh].buffer_srv_gpu.GetIndex();
-		frame_cbuf_data.materials_idx = (Sint32)scene_buffers[SceneBuffer_Material].buffer_srv_gpu.GetIndex();
-		frame_cbuf_data.instances_idx = (Sint32)scene_buffers[SceneBuffer_Instance].buffer_srv_gpu.GetIndex();
-		frame_cbuf_data.lights_idx = (Sint32)scene_buffers[SceneBuffer_Light].buffer_srv_gpu.GetIndex();
+		frame_cbuf_data.meshes_idx = (int32)scene_buffers[SceneBuffer_Mesh].buffer_srv_gpu.GetIndex();
+		frame_cbuf_data.materials_idx = (int32)scene_buffers[SceneBuffer_Material].buffer_srv_gpu.GetIndex();
+		frame_cbuf_data.instances_idx = (int32)scene_buffers[SceneBuffer_Instance].buffer_srv_gpu.GetIndex();
+		frame_cbuf_data.lights_idx = (int32)scene_buffers[SceneBuffer_Light].buffer_srv_gpu.GetIndex();
 		shadow_renderer.FillFrameCBuffer(frame_cbuf_data);
 		frame_cbuf_data.ddgi_volumes_idx = ddgi.IsEnabled() ? ddgi.GetDDGIVolumeIndex() : -1;
 		frame_cbuf_data.printf_buffer_idx = gpu_debug_printer.GetPrintfBufferIndex();
@@ -541,21 +536,15 @@ namespace adria
 						}
 						if (sun_light)
 						{
-							static Float sun_elevation = 75.0f;
-							static Float sun_azimuth = 260.0f;
-							static Float sun_temperature = 5900.0f;
+							static float sun_elevation = 75.0f;
+							static float sun_azimuth = 260.0f;
+							static float sun_temperature = 5900.0f;
 							ConvertDirectionToAzimuthAndElevation(-sun_light->direction, sun_elevation, sun_azimuth);
 
-							Bool changed = false;
-							changed |= ImGui::SliderFloat("Sun Temperature", &sun_temperature, 1000.0f, 15000.0f);
-							changed |= ImGui::SliderFloat("Sun Energy", &sun_light->intensity, 0.0f, 50.0f);
-							changed |= ImGui::SliderFloat("Sun Elevation", &sun_elevation, -90.0f, 90.0f);
-							changed |= ImGui::SliderFloat("Sun Azimuth", &sun_azimuth, 0.0f, 360.0f);
-
-							if (changed)
-							{
-								path_tracer.Reset();
-							}
+							ImGui::SliderFloat("Sun Temperature", &sun_temperature, 1000.0f, 15000.0f);
+							ImGui::SliderFloat("Sun Energy", &sun_light->intensity, 0.0f, 50.0f);
+							ImGui::SliderFloat("Sun Elevation", &sun_elevation, -90.0f, 90.0f);
+							ImGui::SliderFloat("Sun Azimuth", &sun_azimuth, 0.0f, 360.0f);
 
 							sun_light->color = ConvertTemperatureToColor(sun_temperature);
 							sun_light->direction = ConvertElevationAndAzimuthToDirection(sun_elevation, sun_azimuth);
@@ -617,10 +606,15 @@ namespace adria
 
 		std::string absolute_screenshot_path = paths::ScreenshotsDir + screenshot_name + ".png";
 		ADRIA_LOG(INFO, "Taking screenshot: %s.png...", screenshot_name.c_str());
+
+		D3D12_PLACED_SUBRESOURCE_FOOTPRINT final_texture_footprint{};
+		D3D12_RESOURCE_DESC d3d12_final_texture_desc = final_texture->GetNative()->GetDesc();
+		gfx->GetDevice()->GetCopyableFootprints(&d3d12_final_texture_desc, 0, 1, 0, &final_texture_footprint, nullptr, nullptr, nullptr);
+
 		if (!screenshot_buffer)
 		{	
 			GfxBufferDesc screenshot_desc{};
-			screenshot_desc.size = gfx->GetLinearBufferSize(final_texture.get()); 
+			screenshot_desc.size = final_texture_footprint.Footprint.RowPitch * final_texture_footprint.Footprint.Height;
 			screenshot_desc.resource_usage = GfxResourceUsage::Readback;
 			screenshot_buffer = gfx->CreateBuffer(screenshot_desc);
 		}

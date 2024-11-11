@@ -20,7 +20,7 @@ using namespace DirectX;
 namespace adria
 {
 
-	OceanRenderer::OceanRenderer(entt::registry& reg, GfxDevice* gfx, Uint32 w, Uint32 h)
+	OceanRenderer::OceanRenderer(entt::registry& reg, GfxDevice* gfx, uint32 w, uint32 h)
 		: reg{ reg }, gfx{ gfx }, width{ w }, height{ h }
 	{
 		CreatePSOs();
@@ -69,9 +69,9 @@ namespace adria
 
 					struct InitialSpectrumConstants
 					{
-						Float   fft_resolution;
-						Float   ocean_size;
-						Uint32  output_idx;
+						float   fft_resolution;
+						float   ocean_size;
+						uint32  output_idx;
 					} constants =
 					{
 						.fft_resolution = FFT_RESOLUTION, .ocean_size = FFT_RESOLUTION, .output_idx = dst_descriptor.GetIndex()
@@ -98,17 +98,17 @@ namespace adria
 			[=](PhasePassData const& data, RenderGraphContext& context, GfxCommandList* cmd_list)
 			{
 				GfxDevice* gfx = cmd_list->GetDevice();
-				Uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
+				uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i), context.GetReadOnlyTexture(data.phase_srv));
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i + 1), context.GetReadWriteTexture(data.phase_uav));
 
 				struct PhaseConstants
 				{
-					Float   fft_resolution;
-					Float   ocean_size;
-					Float   ocean_choppiness;
-					Uint32  phases_idx;
-					Uint32  output_idx;
+					float   fft_resolution;
+					float   ocean_size;
+					float   ocean_choppiness;
+					uint32  phases_idx;
+					uint32  output_idx;
 				} constants =
 				{
 					.fft_resolution = FFT_RESOLUTION, .ocean_size = FFT_RESOLUTION, .ocean_choppiness = ocean_choppiness,
@@ -138,19 +138,19 @@ namespace adria
 			[=](SpectrumPassData const& data, RenderGraphContext& context, GfxCommandList* cmd_list)
 			{
 				GfxDevice* gfx = cmd_list->GetDevice();
-				Uint32 i = gfx->AllocateDescriptorsGPU(3).GetIndex();
+				uint32 i = gfx->AllocateDescriptorsGPU(3).GetIndex();
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i), context.GetReadOnlyTexture(data.initial_spectrum_srv));
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i + 1), context.GetReadOnlyTexture(data.phase_srv));
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i + 2), context.GetReadWriteTexture(data.spectrum_uav));
 
 				struct SpectrumConstants
 				{
-					Float   fft_resolution;
-					Float   ocean_size;
-					Float   ocean_choppiness;
-					Uint32  initial_spectrum_idx;
-					Uint32  phases_idx;
-					Uint32  output_idx;
+					float   fft_resolution;
+					float   ocean_size;
+					float   ocean_choppiness;
+					uint32  initial_spectrum_idx;
+					uint32  phases_idx;
+					uint32  output_idx;
 				} constants =
 				{
 					.fft_resolution = FFT_RESOLUTION, .ocean_size = FFT_RESOLUTION, .ocean_choppiness = ocean_choppiness,
@@ -167,13 +167,13 @@ namespace adria
 
 		struct FFTConstants
 		{
-			Uint32 input_idx;
-			Uint32 output_idx;
-			Uint32 seq_count;
-			Uint32 subseq_count;
+			uint32 input_idx;
+			uint32 output_idx;
+			uint32 seq_count;
+			uint32 subseq_count;
 		};
 
-		for (Uint32 p = 1; p < FFT_RESOLUTION; p <<= 1)
+		for (uint32 p = 1; p < FFT_RESOLUTION; p <<= 1)
 		{
 			struct FFTHorizontalPassData
 			{
@@ -196,7 +196,7 @@ namespace adria
 
 					cmd_list->SetPipelineState(fft_horizontal_pso.get());
 
-					Uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
+					uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
 					gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i), ctx.GetReadOnlyTexture(data.spectrum_srv));
 					gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i + 1), ctx.GetReadWriteTexture(data.spectrum_uav));
 
@@ -213,7 +213,7 @@ namespace adria
 			pong_spectrum = !pong_spectrum;
 		}
 
-		for (Uint32 p = 1; p < FFT_RESOLUTION; p <<= 1)
+		for (uint32 p = 1; p < FFT_RESOLUTION; p <<= 1)
 		{
 			struct FFTVerticalPassData
 			{
@@ -236,7 +236,7 @@ namespace adria
 
 					cmd_list->SetPipelineState(fft_vertical_pso.get());
 
-					Uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
+					uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
 					gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i), ctx.GetReadOnlyTexture(data.spectrum_srv));
 					gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i + 1), ctx.GetReadWriteTexture(data.spectrum_uav));
 
@@ -274,17 +274,17 @@ namespace adria
 			[=](OceanNormalsPassData const& data, RenderGraphContext& context, GfxCommandList* cmd_list)
 			{
 				GfxDevice* gfx = cmd_list->GetDevice();
-				Uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
+				uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i), context.GetReadOnlyTexture(data.spectrum_srv));
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i + 1), context.GetReadWriteTexture(data.normals_uav));
 
 				struct OceanNormalsConstants
 				{
-					Float   fft_resolution;
-					Float   ocean_size;
-					Float   ocean_choppiness;
-					Uint32  displacement_idx;
-					Uint32  output_idx;
+					float   fft_resolution;
+					float   ocean_size;
+					float   ocean_choppiness;
+					uint32  displacement_idx;
+					uint32  output_idx;
 				} constants =
 				{
 					.fft_resolution = FFT_RESOLUTION, .ocean_size = FFT_RESOLUTION, .ocean_choppiness = ocean_choppiness,
@@ -335,16 +335,16 @@ namespace adria
 				{
 					auto const& [mesh, material, transform] = ocean_chunk_view.get<const SubMesh, const Material, const Transform>(ocean_chunk);
 
-					Uint32 i = gfx->AllocateDescriptorsGPU(3).GetIndex();
+					uint32 i = gfx->AllocateDescriptorsGPU(3).GetIndex();
 					GfxDescriptor dst_handle = gfx->GetDescriptorGPU(i);
 					GfxDescriptor src_handles[] = { context.GetReadOnlyTexture(data.displacement), context.GetReadOnlyTexture(data.normals), g_TextureManager.GetSRV(foam_handle) };
 					gfx->CopyDescriptors(dst_handle, src_handles);
 
 					struct OceanIndices
 					{
-						Uint32 displacement_idx;
-						Uint32 normal_idx;
-						Uint32 foam_idx;
+						uint32 displacement_idx;
+						uint32 normal_idx;
+						uint32 foam_idx;
 					} indices =
 					{
 						.displacement_idx = i, .normal_idx = i + 1,
@@ -387,7 +387,7 @@ namespace adria
 			}, GUICommandGroup_Renderer);
 	}
 
-	void OceanRenderer::OnResize(Uint32 w, Uint32 h)
+	void OceanRenderer::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 	}
@@ -405,13 +405,13 @@ namespace adria
 		ocean_texture_desc.initial_state = GfxResourceState::ComputeUAV;
 		initial_spectrum = gfx->CreateTexture(ocean_texture_desc);
 
-		std::vector<Float> ping_array(FFT_RESOLUTION * FFT_RESOLUTION);
-		RealRandomGenerator rand_float{ 0.0f,  2.0f * pi<Float> };
-		for (Uint64 i = 0; i < ping_array.size(); ++i) ping_array[i] = rand_float();
+		std::vector<float> ping_array(FFT_RESOLUTION * FFT_RESOLUTION);
+		RealRandomGenerator rand_float{ 0.0f,  2.0f * pi<float> };
+		for (uint64 i = 0; i < ping_array.size(); ++i) ping_array[i] = rand_float();
 
 		GfxTextureSubData data{};
 		data.data = ping_array.data();
-		data.row_pitch = sizeof(Float) * FFT_RESOLUTION;
+		data.row_pitch = sizeof(float) * FFT_RESOLUTION;
 		data.slice_pitch = 0;
 
 		GfxTextureData init_data{};

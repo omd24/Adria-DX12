@@ -15,29 +15,29 @@ namespace adria
 	{
 		struct RTAOParams
 		{
-			Float radius = 2.0f;
-			Float power_log = -1.0f;
-			Float filter_distance_sigma = 10.0f;
-			Float filter_depth_sigma = 0.25f;
+			float radius = 2.0f;
+			float power_log = -1.0f;
+			float filter_distance_sigma = 10.0f;
+			float filter_depth_sigma = 0.25f;
 		};
 
 	public:
-		RayTracedAmbientOcclusionPass(GfxDevice* gfx, Uint32 width, Uint32 height);
+		RayTracedAmbientOcclusionPass(GfxDevice* gfx, uint32 width, uint32 height);
 		~RayTracedAmbientOcclusionPass();
 
 		void AddPass(RenderGraph& rendergraph);
 		void GUI();
-		void OnResize(Uint32 w, Uint32 h);
-		Bool IsSupported() const;
+		void OnResize(uint32 w, uint32 h);
+		bool IsSupported() const;
 
 	private:
 		GfxDevice* gfx;
 		std::unique_ptr<GfxStateObject> ray_traced_ambient_occlusion_so;
 		std::unique_ptr<GfxComputePipelineState> rtao_filter_pso;
-		Uint32 width, height;
+		uint32 width, height;
 		BlurPass blur_pass;
 
-		Bool is_supported;
+		bool is_supported;
 		RTAOParams params{};
 
 	private:

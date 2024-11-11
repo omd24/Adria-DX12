@@ -9,7 +9,7 @@ namespace adria
 	class GfxDevice;
 	class GfxRayTracingBLAS;
 
-	enum GfxRayTracingASFlagBit : Uint32
+	enum GfxRayTracingASFlagBit : uint32
 	{
 		GfxRayTracingASFlag_None = 0x0,
 		GfxRayTracingASFlag_AllowUpdate = 0x1,
@@ -19,9 +19,9 @@ namespace adria
 		GfxRayTracingASFlag_MinimizeMemory = 0x10,
 		GfxRayTracingASFlag_PerformUpdate = 0x20,
 	};
-	using GfxRayTracingASFlags = Uint32;
+	using GfxRayTracingASFlags = uint32;
 
-	enum GfxRayTracingInstanceFlagBit : Uint32
+	enum GfxRayTracingInstanceFlagBit : uint32
 	{
 		GfxRayTracingInstanceFlag_None = 0x0,
 		GfxRayTracingInstanceFlag_CullDisable = 0x1,
@@ -30,22 +30,22 @@ namespace adria
 		GfxRayTracingInstanceFlag_ForceNoOpaque = 0x8,
 	};
 
-	using GfxRayTracingInstanceFlags = Uint32;
+	using GfxRayTracingInstanceFlags = uint32;
 
 	struct GfxRayTracingGeometry
 	{
 		GfxBuffer* vertex_buffer;
-		Uint32 vertex_buffer_offset;
-		Uint32 vertex_count;
-		Uint32 vertex_stride;
+		uint32 vertex_buffer_offset;
+		uint32 vertex_count;
+		uint32 vertex_stride;
 		GfxFormat vertex_format;
 
 		GfxBuffer* index_buffer;
-		Uint32 index_buffer_offset;
-		Uint32 index_count;
+		uint32 index_buffer_offset;
+		uint32 index_count;
 		GfxFormat index_format;
 
-		Bool opaque;
+		bool opaque;
 	};
 
 	class GfxRayTracingBLAS
@@ -54,7 +54,7 @@ namespace adria
 		GfxRayTracingBLAS(GfxDevice* gfx, std::span<GfxRayTracingGeometry> geometries, GfxRayTracingASFlags flags);
 		~GfxRayTracingBLAS();
 
-		Uint64 GetGpuAddress() const;
+		uint64 GetGpuAddress() const;
 		GfxBuffer const& GetBuffer() const { return *result_buffer; }
 		GfxBuffer const& operator*() const { return *result_buffer; }
 
@@ -67,9 +67,9 @@ namespace adria
 	struct GfxRayTracingInstance
 	{
 		GfxRayTracingBLAS* blas;
-		Float transform[4][4];
-		Uint32 instance_id;
-		Uint8 instance_mask;
+		float transform[4][4];
+		uint32 instance_id;
+		uint8 instance_mask;
 		GfxRayTracingInstanceFlags flags;
 	};
 
@@ -79,7 +79,7 @@ namespace adria
 		GfxRayTracingTLAS(GfxDevice* gfx, std::span<GfxRayTracingInstance> instances, GfxRayTracingASFlags flags);
 		~GfxRayTracingTLAS();
 
-		Uint64 GetGpuAddress() const;
+		uint64 GetGpuAddress() const;
 		GfxBuffer const& GetBuffer() const { return *result_buffer; }
 		GfxBuffer const& operator*() const { return *result_buffer; }
 

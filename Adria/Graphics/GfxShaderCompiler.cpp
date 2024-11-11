@@ -6,7 +6,7 @@
 #include "cereal/types/string.hpp"
 #include "cereal/types/vector.hpp"
 #include "GfxShaderCompiler.h"
-#include "GfxMacros.h"
+#include "GfxDefines.h"
 #include "Core/Paths.h"
 #include "Utilities/StringUtil.h"
 #include "Utilities/FilesUtil.h"
@@ -39,7 +39,7 @@ namespace adria
 				return E_FAIL;
 			}
 
-			Bool already_included = false;
+			bool already_included = false;
 			for (auto const& included_file : include_files)
 			{
 				if (include_file == included_file)
@@ -51,7 +51,7 @@ namespace adria
 
 			if (already_included)
 			{
-				static const Char nullStr[] = " ";
+				static const char nullStr[] = " ";
 				utils->CreateBlob(nullStr, ARRAYSIZE(nullStr), CP_UTF8, encoding.GetAddressOf());
 				*ppIncludeSource = encoding.Detach();
 				return S_OK;
@@ -151,7 +151,7 @@ namespace adria
 
 	namespace GfxShaderCompiler
 	{
-		static Bool CheckCache(Char const* cache_path, GfxShaderCompileInput const& input, GfxShaderCompileOutput& output)
+		static bool CheckCache(char const* cache_path, GfxShaderCompileInput const& input, GfxShaderCompileOutput& output)
 		{
 			std::string cache_binary(cache_path); cache_binary += ".bin";
 			std::string cache_metadata(cache_path); cache_metadata += ".meta";
@@ -164,19 +164,19 @@ namespace adria
 
 			metadata_archive(output.shader_hash);
 			metadata_archive(output.includes);
-			Uint64 binary_size = 0;
+			uint64 binary_size = 0;
 			metadata_archive(binary_size);
 
 			std::ifstream is2(cache_binary, std::ios::binary);
 			cereal::BinaryInputArchive binary_archive(is2);
 
-			std::unique_ptr<Char[]> binary_data(new Char[binary_size]);
+			std::unique_ptr<char[]> binary_data(new char[binary_size]);
 			binary_archive.loadBinary(binary_data.get(), binary_size);
 			output.shader.SetShaderData(binary_data.get(), binary_size);
 			output.shader.SetDesc(input);
 			return true;
 		}
-		static Bool SaveToCache(Char const* cache_path, GfxShaderCompileOutput const& output)
+		static bool SaveToCache(char const* cache_path, GfxShaderCompileOutput const& output)
 		{
 			std::string cache_metadata(cache_path); cache_metadata += ".meta";
 			std::ofstream os(cache_metadata, std::ios::binary);
@@ -209,7 +209,7 @@ namespace adria
 			library.Reset();
 			utils.Reset();
 		}
-		Bool CompileShader(GfxShaderCompileInput const& input, GfxShaderCompileOutput& output, Bool bypass_cache)
+		bool CompileShader(GfxShaderCompileInput const& input, GfxShaderCompileOutput& output, bool bypass_cache)
 		{
 			std::string define_key;
 			for (GfxShaderDefine const& define : input.defines)
@@ -217,9 +217,9 @@ namespace adria
 				define_key += define.name;
 				define_key += define.value;
 			}
-			Uint64 define_hash = crc64(define_key.c_str(), define_key.size());
+			uint64 define_hash = crc64(define_key.c_str(), define_key.size());
 			std::string build_string = input.flags & ShaderCompilerFlag_Debug ? "debug" : "release";
-			Char cache_path[256];
+			char cache_path[256];
 			sprintf_s(cache_path, "%s%s_%s_%llx_%s", paths::ShaderCacheDir.c_str(), GetFilenameWithoutExtension(input.file).c_str(),
 												    input.entry_point.c_str(), define_hash, build_string.c_str());
 
@@ -227,7 +227,7 @@ namespace adria
 			ADRIA_LOG(INFO, "Shader '%s.%s' not found in cache. Compiling...", input.file.c_str(), input.entry_point.c_str());
 
 			compile:
-			Uint32 code_page = CP_UTF8;
+			uint32 code_page = CP_UTF8;
 			Ref<IDxcBlobEncoding> source_blob;
 
 			std::wstring shader_source = ToWideString(input.file);
@@ -242,7 +242,7 @@ namespace adria
 			std::wstring entry_point = ToWideString(input.entry_point);
 			if (entry_point.empty()) entry_point = L"main";
 
-			std::vector<Wchar const*> compile_args{};
+			std::vector<wchar_t const*> compile_args{};
 			compile_args.push_back(name.c_str());
 			if (input.flags & ShaderCompilerFlag_Debug)
 			{
@@ -292,7 +292,7 @@ namespace adria
 			Ref<IDxcResult> result;
 			hr = compiler->Compile(
 				&source_buffer,
-				compile_args.data(), (Uint32)compile_args.size(),
+				compile_args.data(), (uint32)compile_args.size(),
 				&custom_include_handler,
 				IID_PPV_ARGS(result.GetAddressOf()));
 
@@ -301,11 +301,11 @@ namespace adria
 			{
 				if (errors && errors->GetStringLength() > 0)
 				{
-					Char const* err_msg = errors->GetStringPointer();
+					char const* err_msg = errors->GetStringPointer();
 					ADRIA_LOG(ERROR, "%s", err_msg);
 					std::string msg = "Click OK after you fixed the following errors: \n";
 					msg += err_msg;
-					Sint32 result = MessageBoxA(NULL, msg.c_str(), NULL, MB_OKCANCEL);
+					int32 result = MessageBoxA(NULL, msg.c_str(), NULL, MB_OKCANCEL);
 					if (result == IDOK) goto compile;
 					else if (result == IDCANCEL) return false;
 				}
@@ -323,7 +323,7 @@ namespace adria
 					Ref<IDxcBlobUtf8> pdb_path_utf8;
 					if (SUCCEEDED(utils->GetBlobAsUtf8(pdb_path_utf16.Get(), pdb_path_utf8.GetAddressOf())))
 					{
-						Char pdb_path[256];
+						char pdb_path[256];
 						sprintf_s(pdb_path, "%s%s", paths::ShaderPDBDir.c_str(), pdb_path_utf8->GetStringPointer());
 						FILE* pdb_file = nullptr;
 						fopen_s(&pdb_file, pdb_path, "wb");
@@ -339,7 +339,7 @@ namespace adria
 			if (SUCCEEDED(result->GetOutput(DXC_OUT_SHADER_HASH, IID_PPV_ARGS(hash.GetAddressOf()), nullptr)))
 			{
 				DxcShaderHash* hash_buf = (DxcShaderHash*)hash->GetBufferPointer();
-				memcpy(output.shader_hash, hash_buf->HashDigest, sizeof(Uint64) * 2);
+				memcpy(output.shader_hash, hash_buf->HashDigest, sizeof(uint64) * 2);
 			}
 
 			output.shader.SetDesc(input);
@@ -352,7 +352,7 @@ namespace adria
 		void ReadBlobFromFile(std::string const& filename, GfxShaderBlob& blob)
 		{
 			std::wstring wide_filename = ToWideString(filename);
-			Uint32 code_page = CP_UTF8;
+			uint32 code_page = CP_UTF8;
 			Ref<IDxcBlobEncoding> source_blob;
 			HRESULT hr = library->CreateBlobFromFile(wide_filename.data(), &code_page, source_blob.GetAddressOf());
 			GFX_CHECK_HR(hr);

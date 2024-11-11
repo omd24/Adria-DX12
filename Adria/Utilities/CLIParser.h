@@ -10,11 +10,11 @@ namespace adria
 	{
 		friend class CLIParser;
 	public:
-		CLIArg(std::vector<std::string>&& prefixes, Bool has_value)
+		CLIArg(std::vector<std::string>&& prefixes, bool has_value)
 			: prefixes(std::move(prefixes)), has_value(has_value)
 		{}
 
-		Bool AsBool(Bool default_value = false) const
+		bool AsBool(bool default_value = false) const
 		{
 			ADRIA_ASSERT(has_value);
 			if (value == "true" || value == "1") return true;
@@ -22,29 +22,29 @@ namespace adria
 			ADRIA_ASSERT_MSG(false, "Invalid bool argument!");
 			ADRIA_UNREACHABLE();
 		}
-		Bool AsBoolOr(Bool def) const
+		bool AsBoolOr(bool def) const
 		{
 			if (IsPresent()) return AsBool();
 			else return def;
 		}
 
-		Sint32 AsInt() const
+		int32 AsInt() const
 		{
 			ADRIA_ASSERT(has_value);
-			return (Sint32)strtol(value.c_str(), nullptr, 10);
+			return (int32)strtol(value.c_str(), nullptr, 10);
 		}
-		Sint32 AsIntOr(Sint32 def) const
+		int32 AsIntOr(int32 def) const
 		{
 			if (IsPresent()) return AsInt();
 			else return def;
 		}
 
-		Float AsFloat() const
+		float AsFloat() const
 		{
 			ADRIA_ASSERT(has_value);
-			return (Float)std::strtod(value.c_str(), nullptr);
+			return (float)std::strtod(value.c_str(), nullptr);
 		}
-		Float AsFloatOr(Float def) const
+		float AsFloatOr(float def) const
 		{
 			if (IsPresent()) return AsFloat();
 			else return def;
@@ -61,20 +61,20 @@ namespace adria
 			else return def;
 		}
 
-		Bool IsPresent() const
+		bool IsPresent() const
 		{
 			return is_present;
 		}
-		operator Bool() const
+		operator bool() const
 		{
 			return IsPresent();
 		}
 
 	private:
 		std::vector<std::string> prefixes;
-		Bool has_value;
+		bool has_value;
 		std::string value;
-		Bool is_present = false;
+		bool is_present = false;
 
 		void SetValue(std::string const& _value)
 		{
@@ -95,23 +95,23 @@ namespace adria
 			args.reserve(128);
 		}
 
-		ADRIA_NODISCARD CLIArg& AddArg(Bool has_value, std::convertible_to<std::string> auto... prefixes)
+		ADRIA_NODISCARD CLIArg& AddArg(bool has_value, std::convertible_to<std::string> auto... prefixes)
 		{
 			args.emplace_back(std::vector<std::string>{prefixes...}, has_value);
 			return args.back();
 		}
 
-		void Parse(int argc, Wchar** argv)
+		void Parse(int argc, wchar_t** argv)
 		{
 			std::vector<std::wstring> cmdline(argv, argv + argc);
-			for (Uint64 i = 0; i < cmdline.size(); ++i)
+			for (uint64 i = 0; i < cmdline.size(); ++i)
 			{
-				Bool found = false;
+				bool found = false;
 				for (CLIArg& arg : args)
 				{
 					for (auto const& prefix : arg.prefixes) 
 					{
-						Bool prefix_found = cmdline[i] == ToWideString(prefix);
+						bool prefix_found = cmdline[i] == ToWideString(prefix);
 						if (prefix_found)
 						{
 							found = true;
@@ -129,7 +129,7 @@ namespace adria
 		void Parse(std::wstring const& cmd_line)
 		{
 			int argc;
-			Wchar** argv = CommandLineToArgvW(cmd_line.c_str(), &argc);
+			wchar_t** argv = CommandLineToArgvW(cmd_line.c_str(), &argc);
 			Parse(argc, argv);
 		}
 

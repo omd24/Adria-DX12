@@ -4,7 +4,7 @@
 namespace adria
 {
 
-	enum SkyParams : Uint16
+	enum SkyParams : uint16
 	{
 		SkyParam_A = 0,
 		SkyParam_B,
@@ -21,5 +21,5 @@ namespace adria
 
 	using SkyParameters = std::array<Vector3, SkyParam_Count>;
 
-	SkyParameters CalculateSkyParameters(Float turbidity, Float albedo, Vector3 const& sun_direction);
+	SkyParameters CalculateSkyParameters(float turbidity, float albedo, Vector3 const& sun_direction);
 }

@@ -21,11 +21,11 @@ namespace adria
             void ComputeNormalsEqualWeight(
                 std::vector<vertex_t>& vertices,
                 std::vector<index_t> const& indices,
-                Bool cw = false
+                bool cw = false
         )
         {
             std::vector<XMVECTOR> normals(vertices.size());
-            for (Uint64 face = 0; face < indices.size() / 3; ++face)
+            for (uint64 face = 0; face < indices.size() / 3; ++face)
             {
                 index_t i0 = indices[face * 3];
                 index_t i1 = indices[face * 3 + 1];
@@ -82,7 +82,7 @@ namespace adria
         void ComputeNormalsWeightedByAngle(
             std::vector<vertex_t>& vertices,
             std::vector<index_t> const& indices,
-            Bool cw = false)
+            bool cw = false)
         {
             std::vector<XMVECTOR> normals(vertices.size());
 
@@ -163,7 +163,7 @@ namespace adria
         void ComputeNormalsWeightedByArea(
             std::vector<vertex_t>& vertices,
             std::vector<index_t> indices,
-            Bool cw = false) 
+            bool cw = false) 
         {
             std::vector<XMVECTOR> normals(vertices.size());
 
@@ -234,21 +234,21 @@ namespace adria
         }
 
         static void ComputeTangentFrame(
-            _In_reads_(index_count) Uint32 const* indices, Uint64 index_count,
+            _In_reads_(index_count) uint32 const* indices, uint64 index_count,
             _In_reads_(vertex_count) XMFLOAT3 const* positions,
             _In_reads_(vertex_count) XMFLOAT3 const* normals,
             _In_reads_(vertex_count) XMFLOAT2 const* texcoords,
-            Uint64 vertex_count,
+            uint64 vertex_count,
             _Out_writes_opt_(vertex_count) XMFLOAT4* out_tangents)
         {
 			XMFLOAT3* tangents = new XMFLOAT3[vertex_count]{}; //use unique_ptr<T[]>
 			XMFLOAT3* bitangents = new XMFLOAT3[vertex_count]{};
 
-			for (Uint32 i = 0; i <= index_count - 3; i += 3)
+			for (uint32 i = 0; i <= index_count - 3; i += 3)
 			{
-				Uint32 i0 = indices[i + 0];
-				Uint32 i1 = indices[i + 1];
-				Uint32 i2 = indices[i + 2];
+				uint32 i0 = indices[i + 0];
+				uint32 i1 = indices[i + 1];
+				uint32 i2 = indices[i + 2];
 
 				XMFLOAT3 p0 = positions[i0];
 				XMFLOAT3 p1 = positions[i1];
@@ -261,9 +261,9 @@ namespace adria
 				XMFLOAT3 e1(p1.x - p0.x, p1.y - p0.y, p1.z - p0.z);
 				XMFLOAT3 e2(p2.x - p0.x, p2.y - p0.y, p2.z - p0.z);
 
-				Float x1 = w1.x - w0.x, x2 = w2.x - w0.x;
-				Float y1 = w1.y - w0.y, y2 = w2.y - w0.y;
-				Float r = 1.0F / (x1 * y2 - x2 * y1);
+				float x1 = w1.x - w0.x, x2 = w2.x - w0.x;
+				float y1 = w1.y - w0.y, y2 = w2.y - w0.y;
+				float r = 1.0F / (x1 * y2 - x2 * y1);
 
 				XMVECTOR _e1 = XMLoadFloat3(&e1);
 				XMVECTOR _e2 = XMLoadFloat3(&e2);
@@ -297,13 +297,13 @@ namespace adria
 				XMStoreFloat3(bitangents + i2, _bitangent2);
 			}
 
-			for (Uint64 i = 0; i < vertex_count; ++i)
+			for (uint64 i = 0; i < vertex_count; ++i)
 			{
 				XMFLOAT3 const& n = normals[i];
 				XMFLOAT3 const& t = tangents[i];
                 XMFLOAT3 const& b = bitangents[i];
 
-				Float tangent_w = (XMVectorGetX(XMVector3Dot(XMVector3Cross(XMLoadFloat3(&n), XMLoadFloat3(&t)), XMLoadFloat3(&b))) < 0.0F) ? -1.0F : 1.0F;
+				float tangent_w = (XMVectorGetX(XMVector3Dot(XMVector3Cross(XMLoadFloat3(&n), XMLoadFloat3(&t)), XMLoadFloat3(&b))) < 0.0F) ? -1.0F : 1.0F;
 				XMVECTOR _out_tangent = XMVector3Normalize(XMVectorSubtract(XMLoadFloat3(&t), XMVector3Dot(XMLoadFloat3(&n), XMLoadFloat3(&t))));
                 XMFLOAT3 tangent;
                 XMStoreFloat3(&tangent, _out_tangent);
@@ -326,7 +326,7 @@ namespace adria
         NormalCalculation normal_type,
         std::vector<vertex_t>& vertices,
         std::vector<index_t> indices,
-        Bool cw = false)
+        bool cw = false)
     {
         switch (normal_type)
         {
@@ -343,11 +343,11 @@ namespace adria
     }
    
 	inline void ComputeTangentFrame(
-		_In_reads_(index_count) Uint32 const* indices, Uint64 index_count,
+		_In_reads_(index_count) uint32 const* indices, uint64 index_count,
 		_In_reads_(vertex_count) DirectX::XMFLOAT3 const* positions,
 		_In_reads_(vertex_count) DirectX::XMFLOAT3 const* normals,
 		_In_reads_(vertex_count) DirectX::XMFLOAT2 const* texcoords,
-        Uint64 vertex_count,
+        uint64 vertex_count,
 		_Out_writes_opt_(vertex_count) DirectX::XMFLOAT4* out_tangents)
 	{
         impl::ComputeTangentFrame(indices, index_count, positions, normals, texcoords, vertex_count, out_tangents);

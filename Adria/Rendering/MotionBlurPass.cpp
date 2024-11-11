@@ -12,9 +12,9 @@
 
 namespace adria
 {
-	static TAutoConsoleVariable<Bool> MotionBlur("r.MotionBlur", false, "Enable or Disable Motion Blur");
+	static TAutoConsoleVariable<bool> MotionBlur("r.MotionBlur", false, "Enable or Disable Motion Blur");
 
-	MotionBlurPass::MotionBlurPass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h) 
+	MotionBlurPass::MotionBlurPass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h) 
 	{
 		CreatePSO();
 	}
@@ -54,13 +54,13 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct MotionBlurConstants
 				{
-					Uint32 scene_idx;
-					Uint32 velocity_idx;
-					Uint32 output_idx;
+					uint32 scene_idx;
+					uint32 velocity_idx;
+					uint32 output_idx;
 				} constants =
 				{
 					.scene_idx = i, .velocity_idx = i + 1, .output_idx = i + 2
@@ -75,12 +75,12 @@ namespace adria
 		postprocessor->SetFinalResource(RG_NAME(MotionBlurOutput));
 	}
 
-	void MotionBlurPass::OnResize(Uint32 w, Uint32 h)
+	void MotionBlurPass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 	}
 
-	Bool MotionBlurPass::IsEnabled(PostProcessor const*) const
+	bool MotionBlurPass::IsEnabled(PostProcessor const*) const
 	{
 		return MotionBlur.Get();
 	}

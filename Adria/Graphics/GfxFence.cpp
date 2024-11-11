@@ -13,7 +13,7 @@ namespace adria
 		CloseHandle(event);
 	}
 
-	Bool GfxFence::Create(GfxDevice* gfx, Char const* name)
+	bool GfxFence::Create(GfxDevice* gfx, char const* name)
 	{
 		ID3D12Device* device = gfx->GetDevice();
 
@@ -25,7 +25,7 @@ namespace adria
 		return true;
 	}
 
-	void GfxFence::Wait(Uint64 value)
+	void GfxFence::Wait(uint64 value)
 	{
 		if (!IsCompleted(value))
 		{
@@ -34,17 +34,17 @@ namespace adria
 		}
 	}
 
-	void GfxFence::Signal(Uint64 value)
+	void GfxFence::Signal(uint64 value)
 	{
 		fence->Signal(value);
 	}
 
-	Bool GfxFence::IsCompleted(Uint64 value)
+	bool GfxFence::IsCompleted(uint64 value)
 	{
 		return GetCompletedValue() >= value;
 	}
 
-	Uint64 GfxFence::GetCompletedValue() const
+	uint64 GfxFence::GetCompletedValue() const
 	{
 		return fence->GetCompletedValue();
 	}

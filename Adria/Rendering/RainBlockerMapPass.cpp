@@ -14,24 +14,24 @@
 using namespace DirectX;
 namespace adria
 {
-	static std::pair<Matrix, Matrix> RainBlockerMatrices(Vector4 const& camera_position, Uint32 map_size)
+	static std::pair<Matrix, Matrix> RainBlockerMatrices(Vector4 const& camera_position, uint32 map_size)
 	{
 		Vector3 const max_extents(50.0f, 50.0f, 50.0f);
 		Vector3 const min_extents = -max_extents;
 
-		Float l = min_extents.x;
-		Float b = min_extents.y;
-		Float n = 1.0f;
-		Float r = max_extents.x;
-		Float t = max_extents.y;
-		Float f = (1000 - camera_position.y) * 1.5f;
+		float l = min_extents.x;
+		float b = min_extents.y;
+		float n = 1.0f;
+		float r = max_extents.x;
+		float t = max_extents.y;
+		float f = (1000 - camera_position.y) * 1.5f;
 		Matrix V = XMMatrixLookAtLH(Vector4(0, 1000, 0, 1), camera_position, Vector3::Forward);
 		Matrix P = XMMatrixOrthographicOffCenterLH(l, r, b, t, n, f);
 		return { V,P };
 	}
 
 
-	RainBlockerMapPass::RainBlockerMapPass(entt::registry& reg, GfxDevice* gfx, Uint32 w, Uint32 h) : reg(reg), gfx(gfx), width(w), height(h)
+	RainBlockerMapPass::RainBlockerMapPass(entt::registry& reg, GfxDevice* gfx, uint32 w, uint32 h) : reg(reg), gfx(gfx), width(w), height(h)
 	{
 		CreatePSOs();
 		GfxTextureDesc blocker_desc{};
@@ -81,7 +81,7 @@ namespace adria
 
 					struct GBufferConstants
 					{
-						Uint32 instance_id;
+						uint32 instance_id;
 					} constants{ .instance_id = batch.instance_id };
 					cmd_list->SetRootConstants(1, constants);
 
@@ -94,16 +94,16 @@ namespace adria
 			}, RGPassType::Graphics, RGPassFlags::ForceNoCull);
 	}
 
-	void RainBlockerMapPass::OnResize(Uint32 w, Uint32 h)
+	void RainBlockerMapPass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 	}
 
-	Sint32 RainBlockerMapPass::GetRainBlockerMapIdx() const
+	int32 RainBlockerMapPass::GetRainBlockerMapIdx() const
 	{
 		GfxDescriptor blocker_map_srv_gpu = gfx->AllocateDescriptorsGPU();
 		gfx->CopyDescriptors(1, blocker_map_srv_gpu, blocker_map_srv);
-		return (Sint32)blocker_map_srv_gpu.GetIndex();
+		return (int32)blocker_map_srv_gpu.GetIndex();
 	}
 
 	void RainBlockerMapPass::CreatePSOs()

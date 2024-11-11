@@ -9,11 +9,11 @@ namespace adria
 		Window* this_window = reinterpret_cast<Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 		WindowEventData window_data{};
 		window_data.handle = hwnd;
-		window_data.msg  = static_cast<Uint32>(msg);
-		window_data.wparam = static_cast<Uint64>(w_param);
-		window_data.lparam = static_cast<Sint64>(l_param);
-		window_data.width = this_window ? static_cast<Float>(this_window->Width()) : 0.0f;
-		window_data.height = this_window ? static_cast<Float>(this_window->Height()) : 0.0f;
+		window_data.msg  = static_cast<uint32>(msg);
+		window_data.wparam = static_cast<uint64>(w_param);
+		window_data.lparam = static_cast<int64>(l_param);
+		window_data.width = this_window ? static_cast<float>(this_window->Width()) : 0.0f;
+		window_data.height = this_window ? static_cast<float>(this_window->Height()) : 0.0f;
 
 		LRESULT result = 0ll;
 		if (msg == WM_CLOSE || msg == WM_DESTROY)
@@ -23,8 +23,8 @@ namespace adria
 		}
 		else if (msg == WM_DISPLAYCHANGE || msg == WM_SIZE)
 		{
-			window_data.width = static_cast<Float>(l_param & 0xffff);
-			window_data.height = static_cast<Float>((l_param >> 16) & 0xffff);
+			window_data.width = static_cast<float>(l_param & 0xffff);
+			window_data.height = static_cast<float>((l_param >> 16) & 0xffff);
 		}
 		else result = DefWindowProc(hwnd, msg, w_param, l_param);
         if (this_window) this_window->BroadcastEvent(window_data);
@@ -36,8 +36,8 @@ namespace adria
     {
         HINSTANCE hinstance = GetModuleHandle(NULL);
         const std::wstring window_title = ToWideString(init.title);
-        const Uint32  window_width = init.width;
-        const Uint32  window_height = init.height;
+        const uint32  window_width = init.width;
+        const uint32  window_height = init.height;
         const LPCWSTR class_name = L"AdriaClass";
 
         WNDCLASSEX wcex{};
@@ -85,19 +85,19 @@ namespace adria
 		if (hwnd) DestroyWindow(hwnd);
 	}
 
-	Uint32 Window::Width() const
+	uint32 Window::Width() const
 	{
 		RECT rect{};
         GetClientRect(hwnd, &rect);
-		return static_cast<Uint32>(rect.right - rect.left);
+		return static_cast<uint32>(rect.right - rect.left);
 	}
-    Uint32 Window::Height() const
+    uint32 Window::Height() const
     {
         RECT rect{};
         GetClientRect(hwnd, &rect);
-        return static_cast<Uint32>(rect.bottom - rect.top);
+        return static_cast<uint32>(rect.bottom - rect.top);
     }
-    Uint32 Window::PositionX() const
+    uint32 Window::PositionX() const
     {
         RECT rect{};
         GetClientRect(hwnd, &rect);
@@ -105,7 +105,7 @@ namespace adria
         ClientToScreen(hwnd, (LPPOINT)&rect.right);
         return rect.left;
     }
-	Uint32 Window::PositionY() const
+	uint32 Window::PositionY() const
 	{
 		RECT rect{};
 		GetClientRect(hwnd, &rect);
@@ -114,7 +114,7 @@ namespace adria
 		return rect.top;
 	}
     
-	Bool Window::Loop()
+	bool Window::Loop()
     {
         MSG msg{};
         while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -126,7 +126,7 @@ namespace adria
         return true;
     }
 
-	void Window::Quit(Sint32 exit_code)
+	void Window::Quit(int32 exit_code)
 	{
         PostQuitMessage(exit_code);
 	}
@@ -135,7 +135,7 @@ namespace adria
     {
         return static_cast<void*>(hwnd);
     }
-    Bool Window::IsActive() const
+    bool Window::IsActive() const
     {
         return GetForegroundWindow() == hwnd;
     }

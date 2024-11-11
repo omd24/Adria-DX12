@@ -10,16 +10,16 @@ namespace adria
 	class FXAAPass : public PostEffect
 	{
 	public:
-		FXAAPass(GfxDevice* gfx, Uint32 w, Uint32 h);
+		FXAAPass(GfxDevice* gfx, uint32 w, uint32 h);
 		
-		virtual void OnResize(Uint32 w, Uint32 h) override;
+		virtual void OnResize(uint32 w, uint32 h) override;
 		virtual void AddPass(RenderGraph&, PostProcessor*) override;
-		virtual Bool IsEnabled(PostProcessor const*) const override;
+		virtual bool IsEnabled(PostProcessor const*) const override;
 		virtual void GUI() override;
 
 	private:
 		GfxDevice* gfx;
-		Uint32 width, height;
+		uint32 width, height;
 		std::unique_ptr<GfxComputePipelineState> fxaa_pso;
 
 	private:

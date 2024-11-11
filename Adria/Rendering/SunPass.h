@@ -11,23 +11,23 @@ namespace adria
 	class SunPass : public PostEffect
 	{
 	public:
-		SunPass(GfxDevice* gfx, Uint32 width, Uint32 height);
+		SunPass(GfxDevice* gfx, uint32 width, uint32 height);
 
-		virtual Bool IsEnabled(PostProcessor const*) const override
+		virtual bool IsEnabled(PostProcessor const*) const override
 		{
 			return true;
 		}
 		virtual void AddPass(RenderGraph&, PostProcessor*) override;
 
-		virtual void OnResize(Uint32 w, Uint32 h) override
+		virtual void OnResize(uint32 w, uint32 h) override
 		{
 			width = w, height = h;
 		}
 
 	private:
 		GfxDevice* gfx;
-		Uint32 width;
-		Uint32 height;
+		uint32 width;
+		uint32 height;
 		std::unique_ptr<GfxGraphicsPipelineState> sun_pso;
 
 	private:

@@ -12,10 +12,10 @@
 
 namespace adria
 {
-	static TAutoConsoleVariable<Bool>  AutoExposure("r.AutoExposure", true, "Enable or Disable Auto Exposure");
-	static TAutoConsoleVariable<Float> ExposureBias("r.AutoExposure.ExposureBias", -0.5f, "Bias applied to the computed EV100 when calculating final exposure");
+	static TAutoConsoleVariable<bool>  AutoExposure("r.AutoExposure", true, "Enable or Disable Auto Exposure");
+	static TAutoConsoleVariable<float> ExposureBias("r.AutoExposure.ExposureBias", -0.5f, "Bias applied to the computed EV100 when calculating final exposure");
 
-	AutoExposurePass::AutoExposurePass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h)
+	AutoExposurePass::AutoExposurePass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h)
 	{
 		CreatePSOs();
 	}
@@ -34,7 +34,7 @@ namespace adria
 				data.scene_texture = builder.ReadTexture(postprocessor->GetFinalResource());
 
 				RGBufferDesc desc{};
-				desc.stride = sizeof(Uint32);
+				desc.stride = sizeof(uint32);
 				desc.size = desc.stride * 256;
 				desc.misc_flags = GfxBufferMiscFlag::BufferRaw;
 				desc.resource_usage = GfxResourceUsage::Default;
@@ -48,12 +48,12 @@ namespace adria
 				GfxDescriptor src_handles[] = { context.GetReadOnlyTexture(data.scene_texture), context.GetReadWriteBuffer(data.histogram_buffer) };
 				gfx->CopyDescriptors(dst_handle, src_handles);
 
-				Uint32 descriptor_index = dst_handle.GetIndex();
+				uint32 descriptor_index = dst_handle.GetIndex();
 				GfxDescriptor scene_srv = gfx->GetDescriptorGPU(descriptor_index);
 				GfxDescriptor buffer_gpu = gfx->GetDescriptorGPU(descriptor_index + 1);
 
 				GfxBuffer const& histogram_buffer = context.GetBuffer(*data.histogram_buffer);
-				Uint32 clear_value[4] = { 0, 0, 0, 0 };
+				uint32 clear_value[4] = { 0, 0, 0, 0 };
 				cmd_list->ClearUAV(histogram_buffer, buffer_gpu, context.GetReadWriteBuffer(data.histogram_buffer), clear_value);
 				cmd_list->BufferBarrier(histogram_buffer, GfxResourceState::ComputeUAV, GfxResourceState::ComputeUAV);
 				cmd_list->FlushBarriers();
@@ -61,21 +61,21 @@ namespace adria
 
 				struct BuildHistogramConstants
 				{
-					Uint32  width;
-					Uint32  height;
-					Float rcp_width;
-					Float rcp_height;
-					Float min_luminance;
-					Float max_luminance;
-					Uint32  scene_idx;
-					Uint32  histogram_idx;
+					uint32  width;
+					uint32  height;
+					float rcp_width;
+					float rcp_height;
+					float min_luminance;
+					float max_luminance;
+					uint32  scene_idx;
+					uint32  histogram_idx;
 				} constants = { .width = width, .height = height,
 								.rcp_width = 1.0f / width, .rcp_height = 1.0f / height,
 								.min_luminance = min_luminance, .max_luminance = max_luminance,
 								.scene_idx = descriptor_index, .histogram_idx = descriptor_index + 1 };
 				cmd_list->SetRootConstants(1, constants);
 
-				auto DivideRoudingUp = [](Uint32 a, Uint32 b)
+				auto DivideRoudingUp = [](uint32 a, uint32 b)
 					{
 						return (a + b - 1) / b;
 					};
@@ -103,7 +103,7 @@ namespace adria
 				GfxDevice* gfx = cmd_list->GetDevice();
 
 				cmd_list->SetPipelineState(histogram_reduction_pso.get());
-				Uint32 descriptor_index = gfx->AllocateDescriptorsGPU(2).GetIndex();
+				uint32 descriptor_index = gfx->AllocateDescriptorsGPU(2).GetIndex();
 
 				GfxDescriptor buffer_srv = gfx->GetDescriptorGPU(descriptor_index);
 				gfx->CopyDescriptors(1, buffer_srv, context.GetReadOnlyBuffer(data.histogram_buffer));
@@ -112,12 +112,12 @@ namespace adria
 
 				struct HistogramReductionConstants
 				{
-					Float min_luminance;
-					Float max_luminance;
-					Float low_percentile;
-					Float high_percentile;
-					Uint32  histogram_idx;
-					Uint32  luminance_idx;
+					float min_luminance;
+					float max_luminance;
+					float low_percentile;
+					float high_percentile;
+					uint32  histogram_idx;
+					uint32  luminance_idx;
 				} constants = { .min_luminance = min_luminance, .max_luminance = max_luminance,
 								.low_percentile = low_percentile, .high_percentile = high_percentile,
 								.histogram_idx = descriptor_index, .luminance_idx = descriptor_index + 1 };
@@ -151,7 +151,7 @@ namespace adria
 					GfxDescriptor cpu_descriptor = previous_ev100_uav;
 					GfxDescriptor gpu_descriptor = gfx->AllocateDescriptorsGPU();
 					gfx->CopyDescriptors(1, gpu_descriptor, cpu_descriptor);
-					Float clear_value[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+					float clear_value[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 					cmd_list->ClearUAV(*previous_ev100, gpu_descriptor, cpu_descriptor, clear_value);
 					invalid_history = false;
 				}
@@ -164,16 +164,16 @@ namespace adria
 					context.GetReadOnlyTexture(data.avg_luminance)
 				};
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 descriptor_index = dst_descriptor.GetIndex();
+				uint32 descriptor_index = dst_descriptor.GetIndex();
 
 				struct ExposureConstants
 				{
-					Float adaption_speed;
-					Float exposure_bias;
-					Float frame_time;
-					Uint32  previous_ev_idx;
-					Uint32  exposure_idx;
-					Uint32  luminance_idx;
+					float adaption_speed;
+					float exposure_bias;
+					float frame_time;
+					uint32  previous_ev_idx;
+					uint32  exposure_idx;
+					uint32  luminance_idx;
 				} constants{ .adaption_speed = adaption_speed, .exposure_bias = ExposureBias.Get(), .frame_time = 0.166f,
 						.previous_ev_idx = descriptor_index, .exposure_idx = descriptor_index + 1, .luminance_idx = descriptor_index + 2 };
 
@@ -199,7 +199,7 @@ namespace adria
 		previous_ev100_uav = gfx->CreateTextureUAV(previous_ev100.get());
 
 		GfxBufferDesc hist_desc{};
-		hist_desc.stride = sizeof(Uint32);
+		hist_desc.stride = sizeof(uint32);
 		hist_desc.size = hist_desc.stride * 256;
 		hist_desc.misc_flags = GfxBufferMiscFlag::BufferRaw;
 		hist_desc.resource_usage = GfxResourceUsage::Readback;
@@ -225,14 +225,14 @@ namespace adria
 						if (show_histogram)
 						{
 							ADRIA_ASSERT(histogram_copy->IsMapped());
-							Uint64 histogram_size = histogram_copy->GetSize() / sizeof(Sint32);
-							Sint32* hist_data = histogram_copy->GetMappedData<Sint32>();
-							Sint32 max_value = *std::max_element(hist_data, hist_data + histogram_size);
-							auto converter = [](void* data, Sint32 idx)-> Float
+							uint64 histogram_size = histogram_copy->GetSize() / sizeof(int32);
+							int32* hist_data = histogram_copy->GetMappedData<int32>();
+							int32 max_value = *std::max_element(hist_data, hist_data + histogram_size);
+							auto converter = [](void* data, int32 idx)-> float
 								{
-									return static_cast<Float>(*(((Sint32*)data) + idx));
+									return static_cast<float>(*(((int32*)data) + idx));
 								};
-							ImGui::PlotHistogram("Luminance Histogram", converter, hist_data, (Sint32)histogram_size, 0, NULL, 0.0f, (Float)max_value, ImVec2(0, 80));
+							ImGui::PlotHistogram("Luminance Histogram", converter, hist_data, (int32)histogram_size, 0, NULL, 0.0f, (float)max_value, ImVec2(0, 80));
 						}
 					}
 					ImGui::TreePop();
@@ -241,12 +241,12 @@ namespace adria
 		);
 	}
 
-	void AutoExposurePass::OnResize(Uint32 w, Uint32 h)
+	void AutoExposurePass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 	}
 
-	Bool AutoExposurePass::IsEnabled(PostProcessor const*) const
+	bool AutoExposurePass::IsEnabled(PostProcessor const*) const
 	{
 		return AutoExposure.Get();
 	}

@@ -3,13 +3,13 @@
 
 namespace adria
 {
-	enum class DepthOfFieldType : Uint8;
+	enum class DepthOfFieldType : uint8;
 
 	class GfxDevice;
 	class DepthOfFieldPassGroup final : public PostEffectGroup
 	{
 	public:
-		DepthOfFieldPassGroup(GfxDevice* gfx, Uint32 width, Uint32 height);
+		DepthOfFieldPassGroup(GfxDevice* gfx, uint32 width, uint32 height);
 
 	private:
 		DepthOfFieldType depth_of_field_type;

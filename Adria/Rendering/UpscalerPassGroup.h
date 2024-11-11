@@ -4,17 +4,17 @@
 
 namespace adria
 {
-	enum class UpscalerType : Uint8;
+	enum class UpscalerType : uint8;
 	class GfxDevice;
 
-	using RenderResolutionChangedDelegate = Delegate<void(Uint32, Uint32)>;
+	using RenderResolutionChangedDelegate = Delegate<void(uint32, uint32)>;
 
 	class UpscalerPassGroup final : public TPostEffectGroup<UpscalerPass>
 	{
-		DECLARE_EVENT(UpscalerDisabledEvent, UpscalerPassGroup, Uint32, Uint32)
+		DECLARE_EVENT(UpscalerDisabledEvent, UpscalerPassGroup, uint32, uint32)
 	public:
-		UpscalerPassGroup(GfxDevice* gfx, Uint32 width, Uint32 height);
-		virtual void OnResize(Uint32 w, Uint32 h) override;
+		UpscalerPassGroup(GfxDevice* gfx, uint32 width, uint32 height);
+		virtual void OnResize(uint32 w, uint32 h) override;
 
 		void AddRenderResolutionChangedCallback(RenderResolutionChangedDelegate delegate)
 		{
@@ -25,7 +25,7 @@ namespace adria
 	private:
 		UpscalerType upscaler_type;
 		UpscalerDisabledEvent upscaler_disabled_event;
-		Uint32 display_width, display_height;
+		uint32 display_width, display_height;
 
 	private:
 		virtual void GroupGUI() override;

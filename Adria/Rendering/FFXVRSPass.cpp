@@ -11,13 +11,13 @@
 
 namespace adria
 {
-	static TAutoConsoleVariable<Bool>  VariableRateShading("r.VariableRateShading", false, "");
-	static TAutoConsoleVariable<Bool>  VariableRateShadingImage("r.VariableRateShading.Image", false, "");
-	static TAutoConsoleVariable<Bool>  VariableRateShadingOverlay("r.VariableRateShading.Overlay", false, "");
+	static TAutoConsoleVariable<bool>  VariableRateShading("r.VariableRateShading", false, "");
+	static TAutoConsoleVariable<bool>  VariableRateShadingImage("r.VariableRateShading.Image", false, "");
+	static TAutoConsoleVariable<bool>  VariableRateShadingOverlay("r.VariableRateShading.Overlay", false, "");
 	static TAutoConsoleVariable<int>   VariableRateShadingMode("r.VariableRateShading.Mode", 0, "");
 	static TAutoConsoleVariable<int>   VariableRateShadingCombiner("r.VariableRateShading.Combiner", 0, "");
-	static TAutoConsoleVariable<Float> VariableRateShadingThreshold("r.VariableRateShading.Threshold", 0.015f, "");
-	static TAutoConsoleVariable<Float> VariableRateShadingMotionFactor("r.VariableRateShading.MotionFactor", 0.01f, "");
+	static TAutoConsoleVariable<float> VariableRateShadingThreshold("r.VariableRateShading.Threshold", 0.015f, "");
+	static TAutoConsoleVariable<float> VariableRateShadingMotionFactor("r.VariableRateShading.MotionFactor", 0.01f, "");
 
 	static GfxShadingRate shading_rates[] =
 	{
@@ -30,7 +30,7 @@ namespace adria
 		GfxShadingRate_4X4,
 	};
 
-	FFXVRSPass::FFXVRSPass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h), shading_rate_image_tile_size(0),
+	FFXVRSPass::FFXVRSPass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h), shading_rate_image_tile_size(0),
 		ffx_interface(nullptr), vrs_context{}, vrs_context_description{}
 	{
 		is_supported = gfx->GetCapabilities().SupportsVSR();
@@ -183,20 +183,20 @@ namespace adria
 			}, GUICommandGroup_PostProcessing, GUICommandSubGroup_None);
 	}
 
-	void FFXVRSPass::OnResize(Uint32 w, Uint32 h)
+	void FFXVRSPass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 		CreateVRSImage();
 	}
 
-	Bool FFXVRSPass::IsEnabled(PostProcessor const*) const
+	bool FFXVRSPass::IsEnabled(PostProcessor const*) const
 	{
 		return true;
 	}
 
 	void FFXVRSPass::CreateVRSImage()
 	{
-		Uint32 vrs_image_width, vrs_image_height;
+		uint32 vrs_image_width, vrs_image_height;
 		ffxVrsGetImageSizeFromeRenderResolution(&vrs_image_width, &vrs_image_height, width, height, shading_rate_image_tile_size);
 		GfxTextureDesc vrs_image_desc{};
 		vrs_image_desc.format = GfxFormat::R8_UINT;

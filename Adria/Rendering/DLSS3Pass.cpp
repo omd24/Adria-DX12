@@ -12,17 +12,17 @@
 
 namespace adria
 {
-	static TAutoConsoleVariable<Bool> DLSS3("r.DLSS3", true, "Enable or Disable DLSS3");
+	static TAutoConsoleVariable<bool> DLSS3("r.DLSS3", true, "Enable or Disable DLSS3");
 
-	static constexpr Char const* project_guid = "a0f57b54-1daf-4934-90ae-c4035c19df04";
+	static constexpr char const* project_guid = "a0f57b54-1daf-4934-90ae-c4035c19df04";
 	namespace
 	{
-		void NVSDK_CONV DLSS3Log(Char const* message, NVSDK_NGX_Logging_Level logging_level, NVSDK_NGX_Feature source_component)
+		void NVSDK_CONV DLSS3Log(char const* message, NVSDK_NGX_Logging_Level logging_level, NVSDK_NGX_Feature source_component)
 		{
 		}
 	}
 
-	DLSS3Pass::DLSS3Pass(GfxDevice* gfx, Uint32 w, Uint32 h) 
+	DLSS3Pass::DLSS3Pass(GfxDevice* gfx, uint32 w, uint32 h) 
 		: gfx(gfx), display_width(), display_height(), render_width(), render_height()
 	{
 		sprintf(name_version, "DLSS 3.5");
@@ -87,8 +87,8 @@ namespace adria
 
 				dlss_eval_params.pInDepth = depth_texture.GetNative();
 				dlss_eval_params.pInMotionVectors = velocity_texture.GetNative();
-                dlss_eval_params.InMVScaleX = (Float)render_width;
-                dlss_eval_params.InMVScaleY = (Float)render_height;
+                dlss_eval_params.InMVScaleX = (float)render_width;
+                dlss_eval_params.InMVScaleY = (float)render_height;
 
 				dlss_eval_params.pInExposureTexture = nullptr;
                 dlss_eval_params.InExposureScale = 1.0f;
@@ -154,8 +154,8 @@ namespace adria
 
 				dlss_eval_params.pInDepth = depth_texture.GetNative();
 				dlss_eval_params.pInMotionVectors = velocity_texture.GetNative();
-				dlss_eval_params.InMVScaleX = (Float)render_width;
-				dlss_eval_params.InMVScaleY = (Float)render_height;
+				dlss_eval_params.InMVScaleX = (float)render_width;
+				dlss_eval_params.InMVScaleY = (float)render_height;
 
 				dlss_eval_params.pInExposureTexture = nullptr;
 				dlss_eval_params.InExposureScale = 1.0f;
@@ -174,7 +174,7 @@ namespace adria
 		postprocessor->SetFinalResource(RG_NAME(DLSS3Output));
 	}
 
-	Bool DLSS3Pass::IsEnabled(PostProcessor const*) const
+	bool DLSS3Pass::IsEnabled(PostProcessor const*) const
 	{
 		return DLSS3.Get();
 	}
@@ -200,13 +200,13 @@ namespace adria
 
 	}
 
-	Bool DLSS3Pass::InitializeNVSDK_NGX()
+	bool DLSS3Pass::InitializeNVSDK_NGX()
 	{
 		if (gfx->GetVendor() != GfxVendor::Nvidia) return false;
 
 		ID3D12Device* device = gfx->GetDevice();
 
-		static const Wchar* dll_paths[] = 
+		static const wchar_t* dll_paths[] = 
 		{ 
 		SOLUTION_DIR L"\\External\\DLSS\\lib\\dev",
 		SOLUTION_DIR L"\\External\\DLSS\\lib\\rel",
@@ -264,7 +264,7 @@ namespace adria
 		unsigned int max_height;
 		unsigned int min_width;
 		unsigned int min_height;
-		Float sharpness;
+		float sharpness;
 		NGX_DLSS_GET_OPTIMAL_SETTINGS(ngx_parameters, display_width, display_height, perf_quality, 
 									  &optimal_width, &optimal_height, &max_width, &max_height, &min_width, &min_height, &sharpness);
 		ADRIA_ASSERT(optimal_width != 0 && optimal_height != 0);

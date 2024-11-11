@@ -11,7 +11,7 @@
 namespace adria
 {
 	
-	RayTracedAmbientOcclusionPass::RayTracedAmbientOcclusionPass(GfxDevice* gfx, Uint32 width, Uint32 height)
+	RayTracedAmbientOcclusionPass::RayTracedAmbientOcclusionPass(GfxDevice* gfx, uint32 width, uint32 height)
 		: gfx(gfx), width(width), height(height), blur_pass(gfx)
 	{
 		is_supported = gfx->GetCapabilities().SupportsRayTracing();
@@ -61,15 +61,15 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct RayTracedAmbientOcclusionConstants
 				{
-					Uint32  depth_idx;
-					Uint32  gbuf_normals_idx;
-					Uint32  output_idx;
-					Float   ao_radius;
-					Float   ao_power;
+					uint32  depth_idx;
+					uint32  gbuf_normals_idx;
+					uint32  output_idx;
+					float   ao_radius;
+					float   ao_power;
 				} constants =
 				{
 					.depth_idx = i + 0, .gbuf_normals_idx = i + 1, .output_idx = i + 2,
@@ -119,39 +119,39 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct RTAOFilterIndices
 				{
-					Uint32  depth_idx;
-					Uint32  input_idx;
-					Uint32  output_idx;
+					uint32  depth_idx;
+					uint32  input_idx;
+					uint32  output_idx;
 				} indices =
 				{
 					.depth_idx = i + 0, .input_idx = i + 1, .output_idx = i + 2
 				};
 
-				Float distance_kernel[6];
-				for (Uint64 i = 0; i < 6; ++i)
+				float distance_kernel[6];
+				for (uint64 i = 0; i < 6; ++i)
 				{
-					distance_kernel[i] = (Float)exp(-Float(i * i) / (2.f * params.filter_distance_sigma * params.filter_distance_sigma));
+					distance_kernel[i] = (float)exp(-float(i * i) / (2.f * params.filter_distance_sigma * params.filter_distance_sigma));
 				}
 
 				struct RTAOFilterConstants
 				{
-					Float filter_width;
-					Float filter_height;
-					Float filter_distance_sigma;
-					Float filter_depth_sigma;
-					Float filter_dist_kernel0;
-					Float filter_dist_kernel1;
-					Float filter_dist_kernel2;
-					Float filter_dist_kernel3;
-					Float filter_dist_kernel4;
-					Float filter_dist_kernel5;
+					float filter_width;
+					float filter_height;
+					float filter_distance_sigma;
+					float filter_depth_sigma;
+					float filter_dist_kernel0;
+					float filter_dist_kernel1;
+					float filter_dist_kernel2;
+					float filter_dist_kernel3;
+					float filter_dist_kernel4;
+					float filter_dist_kernel5;
 				} constants =
 				{
-					.filter_width = (Float)width, .filter_height = (Float)height, .filter_distance_sigma = params.filter_distance_sigma, .filter_depth_sigma = params.filter_depth_sigma,
+					.filter_width = (float)width, .filter_height = (float)height, .filter_distance_sigma = params.filter_distance_sigma, .filter_depth_sigma = params.filter_depth_sigma,
 					.filter_dist_kernel0 = distance_kernel[0], .filter_dist_kernel1 = distance_kernel[1],
 					.filter_dist_kernel2 = distance_kernel[2], .filter_dist_kernel3 = distance_kernel[3],
 					.filter_dist_kernel4 = distance_kernel[4], .filter_dist_kernel5 = distance_kernel[5],
@@ -184,13 +184,13 @@ namespace adria
 			}, GUICommandGroup_PostProcessing, GUICommandSubGroup_AO);
 	}
 
-	void RayTracedAmbientOcclusionPass::OnResize(Uint32 w, Uint32 h)
+	void RayTracedAmbientOcclusionPass::OnResize(uint32 w, uint32 h)
 	{
 		if (!IsSupported()) return;
 		width = w, height = h;
 	}
 
-	Bool RayTracedAmbientOcclusionPass::IsSupported() const
+	bool RayTracedAmbientOcclusionPass::IsSupported() const
 	{
 		return is_supported;
 	}

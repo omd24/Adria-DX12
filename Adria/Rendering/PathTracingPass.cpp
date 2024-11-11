@@ -10,7 +10,7 @@
 namespace adria
 {
 
-	PathTracingPass::PathTracingPass(GfxDevice* gfx, Uint32 width, Uint32 height)
+	PathTracingPass::PathTracingPass(GfxDevice* gfx, uint32 width, uint32 height)
 		: gfx(gfx), width(width), height(height)
 	{
 		is_supported = gfx->GetCapabilities().CheckRayTracingSupport(RayTracingSupport::Tier1_1);
@@ -58,14 +58,14 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct PathTracingConstants
 				{
-					Sint32   bounce_count;
-					Sint32   accumulated_frames;
-					Uint32  accum_idx;
-					Uint32  output_idx;
+					int32   bounce_count;
+					int32   accumulated_frames;
+					uint32  accum_idx;
+					uint32  output_idx;
 				} constants =
 				{
 					.bounce_count = max_bounces, .accumulated_frames = accumulated_frames,
@@ -94,7 +94,7 @@ namespace adria
 
 	}
 
-	void PathTracingPass::OnResize(Uint32 w, Uint32 h)
+	void PathTracingPass::OnResize(uint32 w, uint32 h)
 	{
 		if (!IsSupported()) return;
 
@@ -109,7 +109,7 @@ namespace adria
 		accumulation_texture = gfx->CreateTexture(accum_desc);
 	}
 
-	Bool PathTracingPass::IsSupported() const
+	bool PathTracingPass::IsSupported() const
 	{
 		return is_supported;
 	}
@@ -133,7 +133,7 @@ namespace adria
 			pt_state_object_builder.AddSubObject(dxil_lib_desc);
 
 			D3D12_RAYTRACING_SHADER_CONFIG pt_shader_config{};
-			pt_shader_config.MaxPayloadSizeInBytes = sizeof(Float);
+			pt_shader_config.MaxPayloadSizeInBytes = sizeof(float);
 			pt_shader_config.MaxAttributeSizeInBytes = D3D12_RAYTRACING_MAX_ATTRIBUTE_SIZE_IN_BYTES;
 			pt_state_object_builder.AddSubObject(pt_shader_config);
 

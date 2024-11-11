@@ -6,11 +6,11 @@ namespace adria
 	class OutputStreamLogger : public ILogger
 	{
 	public:
-		OutputStreamLogger(Bool use_cerr = false, LogLevel logger_level = LogLevel::LOG_DEBUG);
+		OutputStreamLogger(bool use_cerr = false, LogLevel logger_level = LogLevel::LOG_DEBUG);
 		virtual ~OutputStreamLogger() override;
-		virtual void Log(LogLevel level, Char const* entry, Char const* file, Uint32 line) override;
+		virtual void Log(LogLevel level, char const* entry, char const* file, uint32 line) override;
 	private:
-		Bool const use_cerr;
+		bool const use_cerr;
 		LogLevel const logger_level;
 	};
 

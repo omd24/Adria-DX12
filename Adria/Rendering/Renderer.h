@@ -33,7 +33,7 @@ namespace adria
 	class GfxTexture;
 	struct Light;
 
-	enum class LightingPathType : Uint8
+	enum class LightingPathType : uint8
 	{
 		Deferred,
 		TiledDeferred,
@@ -43,7 +43,7 @@ namespace adria
 
 	class Renderer
 	{
-		enum class VolumetricPathType : Uint8
+		enum class VolumetricPathType : uint8
 		{
 			None,
 			Raymarching2D,
@@ -52,19 +52,18 @@ namespace adria
 
 	public:
 
-		Renderer(entt::registry& reg, GfxDevice* gfx, Uint32 width, Uint32 height);
+		Renderer(entt::registry& reg, GfxDevice* gfx, uint32 width, uint32 height);
 		~Renderer();
 
 		void NewFrame(Camera const* camera);
-		void Update(Float dt);
+		void Update(float dt);
 		void Render();
 
-		void OnResize(Uint32 w, Uint32 h);
-		void OnRenderResolutionChanged(Uint32 w, Uint32 h);
+		void OnResize(uint32 w, uint32 h);
+		void OnRenderResolutionChanged(uint32 w, uint32 h);
 		void OnSceneInitialized();
-		void OnRightMouseClicked(Sint32 x, Sint32 y);
-		void OnTakeScreenshot(Char const*);
-		void OnLightChanged();
+		void OnRightMouseClicked(int32 x, int32 y);
+		void OnTakeScreenshot(char const*);
 
 		PickingData const& GetPickingData() const { return picking_data; }
 		Vector2u GetDisplayResolution() const { return Vector2u(display_width, display_height); }
@@ -86,12 +85,12 @@ namespace adria
 		Camera const* camera;
 		Vector2 camera_jitter;
 
-		Uint32 const backbuffer_count;
-		Uint32 backbuffer_index;
-		Uint32 display_width;
-		Uint32 display_height;
-		Uint32 render_width;
-		Uint32 render_height;
+		uint32 const backbuffer_count;
+		uint32 backbuffer_index;
+		uint32 display_width;
+		uint32 display_height;
+		uint32 render_width;
+		uint32 render_height;
 
 		std::unique_ptr<GfxTexture> final_texture;
 
@@ -138,32 +137,32 @@ namespace adria
 		GPUDebugPrinter gpu_debug_printer;
 
 		//ray tracing
-		Bool ray_tracing_supported = false;
+		bool ray_tracing_supported = false;
 		AccelerationStructure accel_structure;
 		GfxDescriptor tlas_srv;
 
 		//picking
-		Bool update_picking_data = false;
+		bool update_picking_data = false;
 		PickingData picking_data;
 
 		LightingPathType	 lighting_path = LightingPathType::Deferred;
 		RendererOutput		 renderer_output = RendererOutput::Final;
 
 		//weather
-		Float					 ambient_color[3] = { 1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f };
-		Float					 wind_dir[3] = { 1.0f, 0.0f, 1.0f };
-		Float					 wind_speed = 10.0f;
+		float					 ambient_color[3] = { 1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f };
+		float					 wind_dir[3] = { 1.0f, 0.0f, 1.0f };
+		float					 wind_speed = 10.0f;
 		Vector3					 sun_direction;
 
 		//screenshot
-		Bool						take_screenshot = false;
+		bool						take_screenshot = false;
 		std::string					screenshot_name = "";
 		GfxFence					screenshot_fence;
-		Uint64						screenshot_fence_value = 1;
+		uint64						screenshot_fence_value = 1;
 		std::unique_ptr<GfxBuffer>  screenshot_buffer;
 
 		//volumetric
-		Uint32			         volumetric_lights = 0;
+		uint32			         volumetric_lights = 0;
 		VolumetricPathType		 volumetric_path = VolumetricPathType::Raymarching2D;
 		//misc
 		ViewportData			 viewport_data;
@@ -174,7 +173,7 @@ namespace adria
 
 		void GUI();
 		void UpdateSceneBuffers();
-		void UpdateFrameConstants(Float dt);
+		void UpdateFrameConstants(float dt);
 		void CameraFrustumCulling();
 
 		void Render_Deferred(RenderGraph& rg);

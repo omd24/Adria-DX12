@@ -22,8 +22,8 @@ namespace adria
         std::string model_path = "";
         std::string textures_path = "";
 		Matrix model_matrix;
-		Bool triangle_ccw = true;
-		Bool force_mask_alpha_usage = false;
+		bool triangle_ccw = true;
+		bool force_mask_alpha_usage = false;
     };
     struct SkyboxParameters
     {
@@ -32,15 +32,15 @@ namespace adria
     };
 	struct GridParameters
 	{
-		Uint64 tile_count_x;
-		Uint64 tile_count_z;
-		Float tile_size_x;
-		Float tile_size_z;
-		Float texture_scale_x;
-		Float texture_scale_z;
-		Uint64 chunk_count_x;
-		Uint64 chunk_count_z;
-		Bool split_to_chunks = false;
+		uint64 tile_count_x;
+		uint64 tile_count_z;
+		float tile_size_x;
+		float tile_size_z;
+		float texture_scale_x;
+		float texture_scale_z;
+		uint64 chunk_count_x;
+		uint64 chunk_count_z;
+		bool split_to_chunks = false;
 		NormalCalculation normal_type = NormalCalculation::None;
 		std::unique_ptr<Heightmap> heightmap;
 	};
@@ -53,7 +53,7 @@ namespace adria
     {
         Light light_data;
         LightMesh mesh_type = LightMesh::NoMesh;
-        Uint32 mesh_size = 0u;
+        uint32 mesh_size = 0u;
         std::optional<std::string> light_texture = std::nullopt;
     };
 	struct DecalParameters
@@ -61,9 +61,9 @@ namespace adria
 		std::string name = "Decal";
 		std::string albedo_texture_path;
 		std::string normal_texture_path;
-		Float rotation = 0.0f;
-		Float size = 50.0f;
-		Bool modify_gbuffer_normals = false;
+		float rotation = 0.0f;
+		float size = 50.0f;
+		bool modify_gbuffer_normals = false;
 		Vector3 position;
 		Vector3 normal;
 	};

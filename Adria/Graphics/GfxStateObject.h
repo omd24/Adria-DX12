@@ -1,6 +1,6 @@
 #pragma once
 #include "d3dx12.h"
-#include "GfxMacros.h"
+#include "GfxDefines.h"
 
 namespace adria
 {
@@ -20,7 +20,7 @@ namespace adria
 		friend class GfxRayTracingShaderTable;
 
 	public:
-		Bool IsValid() const { return d3d12_so != nullptr; }
+		bool IsValid() const { return d3d12_so != nullptr; }
 
 	private:
 		Ref<ID3D12StateObject> d3d12_so;
@@ -34,9 +34,9 @@ namespace adria
 
 	class GfxStateObjectBuilder
 	{
-		static constexpr Uint64 MAX_SUBOBJECT_DESC_SIZE = sizeof(D3D12_HIT_GROUP_DESC);
+		static constexpr uint64 MAX_SUBOBJECT_DESC_SIZE = sizeof(D3D12_HIT_GROUP_DESC);
 	public:
-		explicit GfxStateObjectBuilder(Uint64 max_subobjects) : max_subobjects(max_subobjects), num_subobjects(0u), subobjects(max_subobjects), subobject_data(max_subobjects* MAX_SUBOBJECT_DESC_SIZE) {}
+		explicit GfxStateObjectBuilder(uint64 max_subobjects) : max_subobjects(max_subobjects), num_subobjects(0u), subobjects(max_subobjects), subobject_data(max_subobjects* MAX_SUBOBJECT_DESC_SIZE) {}
 
 		template<typename SubObjectDesc>
 		void AddSubObject(SubObjectDesc const& desc)
@@ -72,13 +72,13 @@ namespace adria
 		GfxStateObject* CreateStateObject(GfxDevice* gfx, GfxStateObjectType type = GfxStateObjectType::RayTracingPipeline);
 
 	private:
-		std::vector<Uint8> subobject_data;
+		std::vector<uint8> subobject_data;
 		std::vector<D3D12_STATE_SUBOBJECT> subobjects;
-		Uint64 const max_subobjects;
-		Uint64 num_subobjects;
+		uint64 const max_subobjects;
+		uint64 num_subobjects;
 
 	private:
-		void AddSubObject(void const* desc, Uint64 desc_size, D3D12_STATE_SUBOBJECT_TYPE type)
+		void AddSubObject(void const* desc, uint64 desc_size, D3D12_STATE_SUBOBJECT_TYPE type)
 		{
 			ADRIA_ASSERT(desc != nullptr);
 			ADRIA_ASSERT(desc_size > 0);
@@ -86,7 +86,7 @@ namespace adria
 			ADRIA_ASSERT(desc_size <= MAX_SUBOBJECT_DESC_SIZE);
 			ADRIA_ASSERT(num_subobjects < max_subobjects);
 
-			const Uint64 subobject_offset = num_subobjects * MAX_SUBOBJECT_DESC_SIZE;
+			const uint64 subobject_offset = num_subobjects * MAX_SUBOBJECT_DESC_SIZE;
 			memcpy(subobject_data.data() + subobject_offset, desc, desc_size);
 
 			D3D12_STATE_SUBOBJECT& subobject = subobjects[num_subobjects];

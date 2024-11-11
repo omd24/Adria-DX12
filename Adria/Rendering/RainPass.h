@@ -13,21 +13,21 @@ namespace adria
 	class GfxComputePipelineState;
 	class RenderGraph;
 
-	DECLARE_EVENT(RainEvent, RainPass, Bool)
+	DECLARE_EVENT(RainEvent, RainPass, bool)
 
 	class RainPass
 	{
-		static constexpr Uint32 MAX_RAIN_DATA_BUFFER_SIZE = 1 << 20;
+		static constexpr uint32 MAX_RAIN_DATA_BUFFER_SIZE = 1 << 20;
 
 	public:
-		RainPass(entt::registry& reg, GfxDevice* gfx, Uint32 w, Uint32 h);
+		RainPass(entt::registry& reg, GfxDevice* gfx, uint32 w, uint32 h);
 
-		void Update(Float dt);
+		void Update(float dt);
 		void AddBlockerPass(RenderGraph& rg);
 		void AddPass(RenderGraph& rg);
 		void GUI();
-		Bool IsEnabled() const;
-		void OnResize(Uint32 w, Uint32 h)
+		bool IsEnabled() const;
+		void OnResize(uint32 w, uint32 h)
 		{
 			width = w, height = h;
 			rain_blocker_map_pass.OnResize(w, h);
@@ -35,32 +35,32 @@ namespace adria
 		void OnSceneInitialized();
 
 		RainEvent& GetRainEvent() { return rain_event; }
-		void OnRainEnabled(Bool enabled)
+		void OnRainEnabled(bool enabled)
 		{
 			rain_event.Broadcast(enabled && !cheap);
 		}
 
-		Float GetRainTotalTime()		  const { return rain_total_time; }
-		Sint32 GetRainSplashDiffuseIndex() const { return (Sint32)rain_splash_diffuse_handle; }
-		Sint32 GetRainSplashBumpIndex()    const { return (Sint32)rain_splash_bump_handle;    }
-		Sint32 GetRainBlockerMapIndex()    const { return rain_blocker_map_pass.GetRainBlockerMapIdx(); }
+		float GetRainTotalTime()		  const { return rain_total_time; }
+		int32 GetRainSplashDiffuseIndex() const { return (int32)rain_splash_diffuse_handle; }
+		int32 GetRainSplashBumpIndex()    const { return (int32)rain_splash_bump_handle;    }
+		int32 GetRainBlockerMapIndex()    const { return rain_blocker_map_pass.GetRainBlockerMapIdx(); }
 		Matrix GetRainViewProjection()    const { return rain_blocker_map_pass.GetViewProjection(); }
 	private:
 		GfxDevice* gfx;
 		std::unique_ptr<GfxBuffer> rain_data_buffer;
-		Uint32 width;
-		Uint32 height;
+		uint32 width;
+		uint32 height;
 
 		TextureHandle rain_streak_handle = INVALID_TEXTURE_HANDLE;
 		TextureHandle rain_splash_diffuse_handle = INVALID_TEXTURE_HANDLE;
 		TextureHandle rain_splash_bump_handle = INVALID_TEXTURE_HANDLE;
-		Bool pause_simulation = false;
-		Bool cheap = false;
-		Float simulation_speed = 1.0f;
-		Float rain_density = 0.5f;
-		Float streak_scale = 0.33f;
-		Float range_radius = 40.0f;
-		Float rain_total_time = 0.0f;
+		bool pause_simulation = false;
+		bool cheap = false;
+		float simulation_speed = 1.0f;
+		float rain_density = 0.5f;
+		float streak_scale = 0.33f;
+		float range_radius = 40.0f;
+		float rain_total_time = 0.0f;
 
 		RainEvent rain_event;
 		RainBlockerMapPass rain_blocker_map_pass;

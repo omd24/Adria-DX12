@@ -13,9 +13,9 @@
 
 namespace adria
 {
-	static TAutoConsoleVariable<Bool> TAA("r.TAA", false, "Enable or Disable TAA");
+	static TAutoConsoleVariable<bool> TAA("r.TAA", false, "Enable or Disable TAA");
 
-	TAAPass::TAAPass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h)
+	TAAPass::TAAPass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h)
 	{
 		CreatePSO();
 	}
@@ -59,14 +59,14 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct TAAConstants
 				{
-					Uint32 scene_idx;
-					Uint32 prev_scene_idx;
-					Uint32 velocity_idx;
-					Uint32 output_idx;
+					uint32 scene_idx;
+					uint32 prev_scene_idx;
+					uint32 velocity_idx;
+					uint32 output_idx;
 				} constants =
 				{
 					.scene_idx = i, .prev_scene_idx = i + 1, .velocity_idx = i + 2, .output_idx = i + 3
@@ -81,7 +81,7 @@ namespace adria
 		postprocessor->SetFinalResource(RG_NAME(TAAOutput));
 	}
 
-	Bool TAAPass::IsEnabled(PostProcessor const* postprocessor) const
+	bool TAAPass::IsEnabled(PostProcessor const* postprocessor) const
 	{
 		return TAA.Get() && !postprocessor->HasUpscaler();
 	}
@@ -94,12 +94,12 @@ namespace adria
 			}, GUICommandGroup_PostProcessing, GUICommandSubGroup_Antialiasing);
 	}
 
-	Bool TAAPass::IsGUIVisible(PostProcessor const* postprocessor) const
+	bool TAAPass::IsGUIVisible(PostProcessor const* postprocessor) const
 	{
 		return !postprocessor->HasUpscaler();
 	}
 
-	void TAAPass::OnResize(Uint32 w, Uint32 h)
+	void TAAPass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 	}

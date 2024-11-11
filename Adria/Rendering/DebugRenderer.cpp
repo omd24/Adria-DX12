@@ -13,9 +13,9 @@ namespace adria
 	struct SpherePointHelper
 	{
 		Vector3 center;
-		Float radius;
+		float radius;
 
-		Vector3 operator()(Float theta, Float phi) const
+		Vector3 operator()(float theta, float phi) const
 		{
 			return center + Vector3(
 				radius * sin(theta) * sin(phi),
@@ -25,12 +25,12 @@ namespace adria
 		}
 	};
 
-	Uint32 DebugRenderer::ColorToUint(Color const& col)
+	uint32 DebugRenderer::ColorToUint(Color const& col)
 	{
 		return PackToUint(col.R(), col.G(), col.B(), col.A());
 	}
 
-	void DebugRenderer::Initialize(GfxDevice* _gfx, Uint32 _width, Uint32 _height)
+	void DebugRenderer::Initialize(GfxDevice* _gfx, uint32 _width, uint32 _height)
 	{
 		gfx = _gfx;
 		width = _width;
@@ -46,7 +46,7 @@ namespace adria
 		gfx = nullptr;
 	}
 
-	void DebugRenderer::OnResize(Uint32 w, Uint32 h)
+	void DebugRenderer::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 	}
@@ -70,20 +70,20 @@ namespace adria
 				GfxDevice* gfx = cmd_list->GetDevice();
 				cmd_list->SetRootCBV(0, frame_data.frame_cbuffer_address);
 
-				constexpr Uint32 vb_stride = (Uint32)sizeof(DebugVertex);
-				Uint32 transient_lines_count = (Uint32)transient_lines.size();
-				Uint32 persistent_lines_count = (Uint32)persistent_lines.size();
-				Uint32 lines_count = transient_lines_count + persistent_lines_count;
+				constexpr uint32 vb_stride = (uint32)sizeof(DebugVertex);
+				uint32 transient_lines_count = (uint32)transient_lines.size();
+				uint32 persistent_lines_count = (uint32)persistent_lines.size();
+				uint32 lines_count = transient_lines_count + persistent_lines_count;
 
-				Uint32 transient_triangles_count = (Uint32)transient_triangles.size();
-				Uint32 persistent_triangles_count = (Uint32)persistent_triangles.size();
-				Uint32 triangles_count = transient_triangles_count + persistent_triangles_count;
+				uint32 transient_triangles_count = (uint32)transient_triangles.size();
+				uint32 persistent_triangles_count = (uint32)persistent_triangles.size();
+				uint32 triangles_count = transient_triangles_count + persistent_triangles_count;
 
 				if (lines_count != 0)
 				{
-					Uint32 transient_vb_count = transient_lines_count * sizeof(DebugLine) / vb_stride;
-					Uint32 persistent_vb_count = persistent_lines_count * sizeof(DebugLine) / vb_stride;
-					Uint32 vb_count = transient_vb_count + persistent_vb_count;
+					uint32 transient_vb_count = transient_lines_count * sizeof(DebugLine) / vb_stride;
+					uint32 persistent_vb_count = persistent_lines_count * sizeof(DebugLine) / vb_stride;
+					uint32 vb_count = transient_vb_count + persistent_vb_count;
 					GfxDynamicAllocation vb_alloc = cmd_list->AllocateTransient(vb_stride * vb_count, 16);
 
 					vb_alloc.Update(transient_lines.data(), transient_vb_count * vb_stride, 0);
@@ -99,9 +99,9 @@ namespace adria
 				}
 				if (triangles_count != 0)
 				{
-					Uint32 transient_vb_count = transient_triangles_count * sizeof(DebugTriangle) / vb_stride;
-					Uint32 persistent_vb_count = persistent_triangles_count * sizeof(DebugTriangle) / vb_stride;
-					Uint32 vb_count = transient_vb_count + persistent_vb_count;
+					uint32 transient_vb_count = transient_triangles_count * sizeof(DebugTriangle) / vb_stride;
+					uint32 persistent_vb_count = persistent_triangles_count * sizeof(DebugTriangle) / vb_stride;
+					uint32 vb_count = transient_vb_count + persistent_vb_count;
 					GfxDynamicAllocation vb_alloc = cmd_list->AllocateTransient(vb_stride * vb_count, 16);
 
 					vb_alloc.Update(transient_triangles.data(), transient_vb_count * vb_stride, 0);
@@ -131,7 +131,7 @@ namespace adria
 		lines.emplace_back(origin, origin + direction, color);
 	}
 
-	void DebugRenderer::AddTriangle(Vector3 const& a, Vector3 const& b, Vector3 const& c, Color color, Bool wireframe /*= false*/)
+	void DebugRenderer::AddTriangle(Vector3 const& a, Vector3 const& b, Vector3 const& c, Color color, bool wireframe /*= false*/)
 	{
 		if (wireframe)
 		{
@@ -146,7 +146,7 @@ namespace adria
 		}
 	}
 
-	void DebugRenderer::AddQuad(Vector3 const& a, Vector3 const& b, Vector3 const& c, Vector3 const& d, Color color, Bool wireframe /*= false*/)
+	void DebugRenderer::AddQuad(Vector3 const& a, Vector3 const& b, Vector3 const& c, Vector3 const& d, Color color, bool wireframe /*= false*/)
 	{
 		if (wireframe)
 		{
@@ -162,7 +162,7 @@ namespace adria
 		}
 	}
 
-	void DebugRenderer::AddBox(Vector3 const& center, Vector3 const& extents, Color color, Bool wireframe)
+	void DebugRenderer::AddBox(Vector3 const& center, Vector3 const& extents, Color color, bool wireframe)
 	{
 		Vector3 min(center.x - extents.x, center.y - extents.y, center.z - extents.z);
 		Vector3 max(center.x + extents.x, center.y + extents.y, center.z + extents.z);
@@ -201,12 +201,12 @@ namespace adria
 		
 	}
 
-	void DebugRenderer::AddBoundingBox(BoundingBox const& bounding_box, Color color, Bool wireframe)
+	void DebugRenderer::AddBoundingBox(BoundingBox const& bounding_box, Color color, bool wireframe)
 	{
 		AddBox(bounding_box.Center, bounding_box.Extents, color, wireframe);
 	}
 
-	void DebugRenderer::AddBoundingBox(BoundingBox const& bounding_box, Matrix const& transform, Color color, Bool wireframe)
+	void DebugRenderer::AddBoundingBox(BoundingBox const& bounding_box, Matrix const& transform, Color color, bool wireframe)
 	{
 		Vector3 min(bounding_box.Center.x - bounding_box.Extents.x, bounding_box.Center.y - bounding_box.Extents.y, bounding_box.Center.z - bounding_box.Extents.z);
 		Vector3 max(bounding_box.Center.x + bounding_box.Extents.x, bounding_box.Center.y + bounding_box.Extents.y, bounding_box.Center.z + bounding_box.Extents.z);
@@ -246,26 +246,26 @@ namespace adria
 		}
 	}
 
-	void DebugRenderer::AddSphere(BoundingSphere const& sphere, Color color, Bool wireframe)
+	void DebugRenderer::AddSphere(BoundingSphere const& sphere, Color color, bool wireframe)
 	{
 		AddSphere(sphere.Center, sphere.Radius, color, wireframe);
 	}
 
-	void DebugRenderer::AddSphere(Vector3 const& center, Float radius, Color color, Bool wireframe /*= true*/)
+	void DebugRenderer::AddSphere(Vector3 const& center, float radius, Color color, bool wireframe /*= true*/)
 	{
-		static constexpr Uint32 SLICES = 16;
-		static constexpr Uint32 STACKS = 16;
+		static constexpr uint32 SLICES = 16;
+		static constexpr uint32 STACKS = 16;
 
 		SpherePointHelper sphere_point_helper{ .center = center, .radius = radius };
 
-		Float j_step = pi<Float> / SLICES;
-		Float i_step = pi<Float> / STACKS;
+		float j_step = pi<float> / SLICES;
+		float i_step = pi<float> / STACKS;
 
 		if (wireframe)
 		{
-			for (Float j = 0; j < pi<Float>; j += j_step)
+			for (float j = 0; j < pi<float>; j += j_step)
 			{
-				for (Float i = 0; i < pi<Float> *2; i += i_step)
+				for (float i = 0; i < pi<float> *2; i += i_step)
 				{
 					Vector3 p1 = sphere_point_helper(i, j);
 					Vector3 p2 = sphere_point_helper(i + i_step, j);
@@ -281,9 +281,9 @@ namespace adria
 		}
 		else
 		{
-			for (Float j = 0; j < pi<Float>; j += j_step)
+			for (float j = 0; j < pi<float>; j += j_step)
 			{
-				for (Float i = 0; i < pi<Float> *2; i += i_step)
+				for (float i = 0; i < pi<float> *2; i += i_step)
 				{
 					Vector3 p1 = sphere_point_helper(i, j);
 					Vector3 p2 = sphere_point_helper(i + i_step, j);

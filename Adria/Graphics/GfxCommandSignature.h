@@ -1,12 +1,12 @@
 #pragma once
 #include <memory>
 #include <d3d12.h>
-#include "GfxMacros.h"
+#include "GfxDefines.h"
 #include "Utilities/Ref.h"
 
 namespace adria
 {
-	enum class IndirectCommandType : Uint8
+	enum class IndirectCommandType : uint8
 	{
 		Draw,
 		DrawIndexed,

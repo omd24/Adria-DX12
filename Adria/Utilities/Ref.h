@@ -132,7 +132,7 @@ namespace adria
 		}
 #pragma endregion
 
-		operator Bool() const 
+		operator bool() const 
 		{
 			return Get() != nullptr;
 		}

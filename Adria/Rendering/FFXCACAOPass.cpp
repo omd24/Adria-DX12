@@ -11,7 +11,7 @@ namespace adria
 	{
 		struct CacaoPreset 
 		{
-			Bool use_downsampled_ssao;
+			bool use_downsampled_ssao;
 			FfxCacaoSettings cacao_settings;
 		};
 		std::vector<std::string> FfxCacaoPresetNames = 
@@ -264,7 +264,7 @@ namespace adria
 	}
 
 	
-	FFXCACAOPass::FFXCACAOPass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h), ffx_interface(nullptr)
+	FFXCACAOPass::FFXCACAOPass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h), ffx_interface(nullptr)
 	{
 		if (!gfx->GetCapabilities().SupportsShaderModel(SM_6_6)) return;
 		sprintf(name_version, "FFX CACAO %d.%d.%d", FFX_CACAO_VERSION_MAJOR, FFX_CACAO_VERSION_MINOR, FFX_CACAO_VERSION_PATCH);
@@ -354,20 +354,20 @@ namespace adria
 				if (ImGui::TreeNodeEx(name_version, ImGuiTreeNodeFlags_None))
 				{
 					ImGui::Combo("Preset", &preset_id,
-						[](void* vec, int idx, const Char** out_text)
+						[](void* vec, int idx, const char** out_text)
 						{
 							std::vector<std::string>* vector = reinterpret_cast<std::vector<std::string>*>(vec);
 							if (idx < 0 || idx >= vector->size()) return false;
 							*out_text = vector->at(idx).c_str();
 							return true;
-						}, reinterpret_cast<void*>(&FfxCacaoPresetNames), (Sint32)FfxCacaoPresetNames.size());
+						}, reinterpret_cast<void*>(&FfxCacaoPresetNames), (int32)FfxCacaoPresetNames.size());
 
 					ImGui::TreePop();
 				}
 			}, GUICommandGroup_PostProcessing, GUICommandSubGroup_AO);
 	}
 
-	void FFXCACAOPass::OnResize(Uint32 w, Uint32 h)
+	void FFXCACAOPass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 		DestroyContext();

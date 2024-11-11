@@ -116,12 +116,12 @@ namespace adria
 				return *this;
 			}
 
-			Bool operator==(RingBufferIterator const& other) const
+			bool operator==(RingBufferIterator const& other) const
 			{
 				return buf.buffer.data() == other.buf.buffer.data() && pos == other.pos;
 			}
 
-			Bool operator!=(RingBufferIterator const& other) const
+			bool operator!=(RingBufferIterator const& other) const
 			{
 				return !(*this == other);
 			}
@@ -231,12 +231,12 @@ namespace adria
 				return *this;
 			}
 
-			Bool operator==(ConstRingBufferIterator const& other) const
+			bool operator==(ConstRingBufferIterator const& other) const
 			{
 				return buf.buffer.data() == other.buf.buffer.data() && pos == other.pos;
 			}
 
-			Bool operator!=(ConstRingBufferIterator const& other) const
+			bool operator!=(ConstRingBufferIterator const& other) const
 			{
 				return !(*this == other);
 			}
@@ -333,12 +333,12 @@ namespace adria
 			return buffer.size() - 1;
 		}
 
-		Bool Empty() const
+		bool Empty() const
 		{
 			return content_size == 0;
 		}
 
-		Bool Full() const
+		bool Full() const
 		{
 			return content_size == Capacity();
 		}
@@ -431,7 +431,7 @@ namespace adria
 			if (head == buffer.size()) head = 0;
 		}
 
-		Bool InBounds(size_type i) const
+		bool InBounds(size_type i) const
 		{
 			return (i >= head && i <= tail) || !(i > tail && i < head);
 		}

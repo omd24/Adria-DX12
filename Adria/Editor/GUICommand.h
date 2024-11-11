@@ -12,7 +12,7 @@ namespace adria
 		GUICommandGroup_PostProcessing,
 		GUICommandGroup_Count
 	};
-	static Char const* GUICommandGroupNames[] =
+	static char const* GUICommandGroupNames[] =
 	{
 		"",
 		"Renderer",
@@ -28,7 +28,7 @@ namespace adria
 		GUICommandSubGroup_Antialiasing,
 		GUICommandSubGroup_Count
 	};
-	static Char const* GUICommandSubGroupNames[] =
+	static char const* GUICommandSubGroupNames[] =
 	{
 		"Ambient Occlusion",
 		"",
@@ -50,8 +50,8 @@ namespace adria
 	class GfxTexture;
 	struct GUITexture
 	{
-		Char const* name;
+		char const* name;
 		GfxTexture* gfx_texture;
 	};
-	void GUI_DebugTexture(Char const* name, GfxTexture* gfx_texture);
+	void GUI_DebugTexture(char const* name, GfxTexture* gfx_texture);
 }

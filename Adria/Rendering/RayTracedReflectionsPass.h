@@ -14,23 +14,23 @@ namespace adria
 	class RayTracedReflectionsPass : public PostEffect
 	{
 	public:
-		RayTracedReflectionsPass(GfxDevice* gfx, Uint32 width, Uint32 height);
+		RayTracedReflectionsPass(GfxDevice* gfx, uint32 width, uint32 height);
 		~RayTracedReflectionsPass();
 
 		virtual void AddPass(RenderGraph&, PostProcessor*) override;
-		virtual void OnResize(Uint32 w, Uint32 h) override;
-		virtual Bool IsEnabled(PostProcessor const*) const override;
+		virtual void OnResize(uint32 w, uint32 h) override;
+		virtual bool IsEnabled(PostProcessor const*) const override;
 		virtual void GUI() override;
-		virtual Bool IsSupported() const override;
+		virtual bool IsSupported() const override;
 
 	private:
 		GfxDevice* gfx;
 		std::unique_ptr<GfxStateObject> ray_traced_reflections_so;
-		Uint32 width, height;
+		uint32 width, height;
 		BlurPass blur_pass;
 
-		Bool is_supported;
-		Float reflection_roughness_scale = 0.0f;
+		bool is_supported;
+		float reflection_roughness_scale = 0.0f;
 		CopyToTexturePass copy_to_texture_pass;
 
 	private:

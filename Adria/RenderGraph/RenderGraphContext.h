@@ -32,18 +32,18 @@ namespace adria
 
 	struct RenderGraphResource
 	{
-		RenderGraphResource(Uint64 id, Bool imported, Char const* name)
+		RenderGraphResource(uint64 id, bool imported, char const* name)
 			: id(id), imported(imported), version(0), ref_count(0), name(name)
 		{}
 
-		Uint64 id;
-		Bool imported;
-		Uint64 version;
-		Uint64 ref_count;
+		uint64 id;
+		bool imported;
+		uint64 version;
+		uint64 ref_count;
 
 		RenderGraphPassBase* writer = nullptr;
 		RenderGraphPassBase* last_used_by = nullptr;
-		Char const* name = "";
+		char const* name = "";
 	};
 	using RGResource = RenderGraphResource;
 
@@ -53,11 +53,11 @@ namespace adria
 		using Resource = RGResourceTraits<ResourceType>::Resource;
 		using ResourceDesc = RGResourceTraits<ResourceType>::ResourceDesc;
 
-		TypedRenderGraphResource(Uint64 id, Resource* resource, Char const* name = "")
+		TypedRenderGraphResource(uint64 id, Resource* resource, char const* name = "")
 			: RenderGraphResource(id, true, name), resource(resource), desc(resource->GetDesc())
 		{}
 
-		TypedRenderGraphResource(Uint64 id, ResourceDesc const& desc, Char const* name = "")
+		TypedRenderGraphResource(uint64 id, ResourceDesc const& desc, char const* name = "")
 			: RenderGraphResource(id, false, name), resource(nullptr), desc(desc)
 		{}
 

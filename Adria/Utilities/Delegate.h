@@ -72,7 +72,7 @@ namespace adria
 			return callback(args...);
 		}
 
-		Bool IsBound() const { return callback != nullptr; }
+		bool IsBound() const { return callback != nullptr; }
 
 		template<typename F> requires std::is_constructible_v<DelegateType, F>
 		static Delegate CreateLambda(F&& lambda)
@@ -117,22 +117,22 @@ namespace adria
 		}
 		~DelegateHandle() noexcept = default;
 
-		operator Bool() const
+		operator bool() const
 		{
 			return IsValid();
 		}
 
-		Bool operator==(DelegateHandle const& that) const
+		bool operator==(DelegateHandle const& that) const
 		{
 			return id == that.id;
 		}
 
-		Bool operator<(DelegateHandle const& that) const
+		bool operator<(DelegateHandle const& that) const
 		{
 			return id < that.id;
 		}
 
-		Bool IsValid() const
+		bool IsValid() const
 		{
 			return id != INVALID_ID;
 		}
@@ -143,14 +143,14 @@ namespace adria
 		}
 
 	private:
-		Uint64 id;
+		uint64 id;
 
 	private:
 
-		inline static constexpr Uint64 INVALID_ID = Uint64(-1);
-		static Uint64 GenerateID()
+		inline static constexpr uint64 INVALID_ID = uint64(-1);
+		static uint64 GenerateID()
 		{
-			static Uint64 current_id = 0;
+			static uint64 current_id = 0;
 			return current_id++;
 		}
 	};
@@ -195,11 +195,11 @@ namespace adria
 			return Add(DelegateType::CreateMember(mem_pfn, instance));
 		}
 
-		ADRIA_MAYBE_UNUSED Bool Remove(DelegateHandle& handle)
+		ADRIA_MAYBE_UNUSED bool Remove(DelegateHandle& handle)
 		{
 			if (handle.IsValid())
 			{
-				for (Uint64 i = 0; i < delegate_array.size(); ++i)
+				for (uint64 i = 0; i < delegate_array.size(); ++i)
 				{
 					if (delegate_array[i].first == handle)
 					{
@@ -220,17 +220,17 @@ namespace adria
 
 		void Broadcast(Args... args)
 		{
-			for (Uint64 i = 0; i < delegate_array.size(); ++i)
+			for (uint64 i = 0; i < delegate_array.size(); ++i)
 			{
 				if (delegate_array[i].first.IsValid()) delegate_array[i].second.ExecuteIfBound(std::forward<Args>(args)...);
 			}
 		}
 
-		Bool IsHandleBound(DelegateHandle const& handle) const
+		bool IsHandleBound(DelegateHandle const& handle) const
 		{
 			if (handle.IsValid())
 			{
-				for (Uint64 i = 0; i < delegate_array.size(); ++i)
+				for (uint64 i = 0; i < delegate_array.size(); ++i)
 				{
 					if (delegate_array[i].Handle == handle) return true;
 				}

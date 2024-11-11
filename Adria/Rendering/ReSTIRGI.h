@@ -22,20 +22,20 @@ namespace adria
 		};
 
 	public:
-		ReSTIRGI(GfxDevice* gfx, Uint32 width, Uint32 height);
+		ReSTIRGI(GfxDevice* gfx, uint32 width, uint32 height);
 
 		void AddPasses(RenderGraph& rg);
 
-		void OnResize(Uint32 w, Uint32 h)
+		void OnResize(uint32 w, uint32 h)
 		{
 			width = w, height = h;
 		}
 
 	private:
 		GfxDevice* gfx;
-		Uint32 width, height;
+		uint32 width, height;
 
-		Bool enable = false;
+		bool enable = false;
 		ResamplingMode resampling_mode = ResamplingMode::TemporalAndSpatial;
 
 		struct TemporalReservoirBuffers

@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "Graphics/GfxMacros.h"
+#include "Graphics/GfxDefines.h"
 #include "Graphics/GfxDescriptor.h"
 
 namespace adria
@@ -17,7 +17,7 @@ namespace adria
 		ADRIA_DEFAULT_MOVABLE(GPUDebugPrinter)
 		~GPUDebugPrinter();
 
-		Sint32 GetPrintfBufferIndex();
+		int32 GetPrintfBufferIndex();
 		void AddClearPass(RenderGraph& rg);
 		void AddPrintPass(RenderGraph& rg);
 

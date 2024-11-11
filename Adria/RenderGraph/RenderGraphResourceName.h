@@ -20,40 +20,40 @@ namespace adria
 {
 	struct RenderGraphResourceName
 	{
-		static constexpr Uint64 INVALID_HASH = Uint64(-1);
+		static constexpr uint64 INVALID_HASH = uint64(-1);
 
 #if RG_DEBUG
 		RenderGraphResourceName() : hashed_name(INVALID_HASH), name{"uninitialized"}{}
-		template<Uint64 N>
-		constexpr explicit RenderGraphResourceName(Char const (&_name)[N], Uint64 hash) : hashed_name(hash), name(_name)
+		template<uint64 N>
+		constexpr explicit RenderGraphResourceName(char const (&_name)[N], uint64 hash) : hashed_name(hash), name(_name)
 		{}
 
-		operator Char const*() const
+		operator char const*() const
 		{
 			return name;
 		}
 #else
 		RenderGraphResourceName() : hashed_name(INVALID_HASH) {}
-		constexpr explicit RenderGraphResourceName(Uint64 hash) : hashed_name(hash)
+		constexpr explicit RenderGraphResourceName(uint64 hash) : hashed_name(hash)
 		{}
 
-		operator Char const*() const
+		operator char const*() const
 		{
 			return "";
 		}
 #endif
-		Bool IsValidName() const
+		bool IsValidName() const
 		{
 			return hashed_name != INVALID_HASH;
 		}
 
-		Uint64 hashed_name;
+		uint64 hashed_name;
 #if RG_DEBUG
-		Char const* name;
+		char const* name;
 #endif
 	};
 	using RGResourceName = RenderGraphResourceName;
-	inline Bool operator==(RenderGraphResourceName const& name1, RenderGraphResourceName const& name2)
+	inline bool operator==(RenderGraphResourceName const& name1, RenderGraphResourceName const& name2)
 	{
 		return name1.hashed_name == name2.hashed_name;
 	}
@@ -63,7 +63,7 @@ namespace std
 {
 	template <> struct hash<adria::RenderGraphResourceName>
 	{
-		adria::Uint64 operator()(adria::RenderGraphResourceName const& res_name) const
+		adria::uint64 operator()(adria::RenderGraphResourceName const& res_name) const
 		{
 			return hash<decltype(res_name.hashed_name)>()(res_name.hashed_name);
 		}

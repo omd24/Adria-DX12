@@ -3,11 +3,9 @@
 
 namespace adria
 {
-	DECLARE_EVENT(TakeScreenshotEvent, Editor, Char const*)
-	DECLARE_EVENT(LightChangedEvent, Editor)
+	DECLARE_EVENT(TakeScreenshotEvent, Editor, char const*)
 	struct EditorEvents
 	{
 		TakeScreenshotEvent take_screenshot_event;
-		LightChangedEvent light_changed_event;
 	};
 }

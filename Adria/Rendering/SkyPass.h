@@ -15,7 +15,7 @@ namespace adria
 	class GfxGraphicsPipelineState;
 	class GfxComputePipelineState;
 
-	enum class SkyType : Uint8
+	enum class SkyType : uint8
 	{
 		Skybox,
 		MinimalAtmosphere,
@@ -25,16 +25,16 @@ namespace adria
 	class SkyPass
 	{
 	public:
-		SkyPass(entt::registry& reg, GfxDevice* gfx, Uint32 w, Uint32 h);
+		SkyPass(entt::registry& reg, GfxDevice* gfx, uint32 w, uint32 h);
 
 		void AddComputeSkyPass(RenderGraph& rg, Vector3 const& dir);
 		void AddDrawSkyPass(RenderGraph& rg);
 
-		void OnResize(Uint32 w, Uint32 h);
+		void OnResize(uint32 w, uint32 h);
 		void OnSceneInitialized();
 		void GUI();
 
-		Sint32 GetSkyIndex() const;
+		int32 GetSkyIndex() const;
 		void SetSkyType(SkyType type)
 		{
 			sky_type = type;
@@ -43,7 +43,7 @@ namespace adria
 	private:
 		entt::registry& reg;
 		GfxDevice* gfx;
-		Uint32 width, height;
+		uint32 width, height;
 		std::unique_ptr<GfxBuffer>	cube_vb = nullptr;
 		std::unique_ptr<GfxBuffer>	cube_ib = nullptr;
 
@@ -55,8 +55,8 @@ namespace adria
 		std::unique_ptr<GfxGraphicsPipelineState> sky_pso;
 		
 		SkyType sky_type = SkyType::HosekWilkie;
-		Float turbidity = 2.0f;
-		Float ground_albedo = 0.1f;
+		float turbidity = 2.0f;
+		float ground_albedo = 0.1f;
 
 	private:
 		void CreatePSOs();

@@ -17,19 +17,19 @@ using namespace DirectX;
 namespace adria
 {
 	static TAutoConsoleVariable<int> LensFlare("r.LensFlare.Type", 0, "0 - procedural, 1 - texture-based");
-	enum LensFlareType : Uint8
+	enum LensFlareType : uint8
 	{
 		LensFlareType_Procedural,
 		LensFlareType_TextureBased,
 	};
 
-	LensFlarePass::LensFlarePass(GfxDevice* gfx, Uint32 w, Uint32 h)
+	LensFlarePass::LensFlarePass(GfxDevice* gfx, uint32 w, uint32 h)
 		: gfx(gfx), width(w), height(h)
 	{
 		CreatePSOs();
 	}
 
-	Bool LensFlarePass::IsEnabled(PostProcessor const* postprocessor) const
+	bool LensFlarePass::IsEnabled(PostProcessor const* postprocessor) const
 	{
 		auto lights = postprocessor->GetRegistry().view<Light>();
 		for (entt::entity light : lights)
@@ -61,7 +61,7 @@ namespace adria
 		}
 	}
 
-	void LensFlarePass::OnResize(Uint32 w, Uint32 h)
+	void LensFlarePass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 	}
@@ -90,7 +90,7 @@ namespace adria
 		);
 	}
 
-	Bool LensFlarePass::IsGUIVisible(PostProcessor const* postprocessor) const
+	bool LensFlarePass::IsGUIVisible(PostProcessor const* postprocessor) const
 	{
 		return IsEnabled(postprocessor);
 	}
@@ -153,24 +153,24 @@ namespace adria
 				}
 
 				std::vector<GfxDescriptor> lens_flare_descriptors{};
-				for (Uint64 i = 0; i < lens_flare_textures.size(); ++i)
+				for (uint64 i = 0; i < lens_flare_textures.size(); ++i)
 					lens_flare_descriptors.push_back(g_TextureManager.GetSRV(lens_flare_textures[i]));
 				lens_flare_descriptors.push_back(context.GetReadOnlyTexture(data.depth));
 
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(8);
 				gfx->CopyDescriptors(dst_descriptor, lens_flare_descriptors);
-				Uint32 i = dst_descriptor.GetIndex();
+				uint32 i = dst_descriptor.GetIndex();
 
 				struct LensFlareConstants
 				{
-					Uint32   lens_idx0;
-					Uint32   lens_idx1;
-					Uint32   lens_idx2;
-					Uint32   lens_idx3;
-					Uint32   lens_idx4;
-					Uint32   lens_idx5;
-					Uint32   lens_idx6;
-					Uint32   depth_idx;
+					uint32   lens_idx0;
+					uint32   lens_idx1;
+					uint32   lens_idx2;
+					uint32   lens_idx3;
+					uint32   lens_idx4;
+					uint32   lens_idx5;
+					uint32   lens_idx6;
+					uint32   depth_idx;
 				} constants =
 				{
 					.lens_idx0 = i, .lens_idx1 = i + 1, .lens_idx2 = i + 2, .lens_idx3 = i + 3,
@@ -179,9 +179,9 @@ namespace adria
 
 				struct LensFlareConstants2
 				{
-					Float light_ss_x;
-					Float light_ss_y;
-					Float light_ss_z;
+					float light_ss_x;
+					float light_ss_y;
+					float light_ss_z;
 				} constants2 =
 				{
 					.light_ss_x = light_ss.x,
@@ -239,14 +239,14 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct LensFlareConstants
 				{
-					Float light_ss_x;
-					Float light_ss_y;
-					Uint32 depth_idx;
-					Uint32 output_idx;
+					float light_ss_x;
+					float light_ss_y;
+					uint32 depth_idx;
+					uint32 output_idx;
 				} constants =
 				{
 					.light_ss_x = light_ss.x,

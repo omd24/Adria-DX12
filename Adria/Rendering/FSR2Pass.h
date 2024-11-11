@@ -11,10 +11,10 @@ namespace adria
 	class FSR2Pass : public UpscalerPass
 	{
 	public:
-		FSR2Pass(GfxDevice* gfx, Uint32 w, Uint32 h);
+		FSR2Pass(GfxDevice* gfx, uint32 w, uint32 h);
 		~FSR2Pass();
 
-		virtual void OnResize(Uint32 w, Uint32 h) override
+		virtual void OnResize(uint32 w, uint32 h) override
 		{
 			display_width = w, display_height = h;
 			RecreateRenderResolution();
@@ -22,23 +22,23 @@ namespace adria
 			CreateContext();
 		}
 		virtual void AddPass(RenderGraph&, PostProcessor*) override;
-		virtual Bool IsEnabled(PostProcessor const*) const override;
+		virtual bool IsEnabled(PostProcessor const*) const override;
 		virtual void GUI() override;
 
 	private:
-		Char name_version[16] = {};
+		char name_version[16] = {};
 		GfxDevice* gfx = nullptr;
-		Uint32 display_width, display_height;
-		Uint32 render_width, render_height;
+		uint32 display_width, display_height;
+		uint32 render_width, render_height;
 
 		FfxInterface* ffx_interface;
 		FfxFsr2ContextDescription fsr2_context_desc{};
 		FfxFsr2Context fsr2_context{};
-		Bool recreate_context = false;
+		bool recreate_context = false;
 
 		FfxFsr2QualityMode fsr2_quality_mode = FFX_FSR2_QUALITY_MODE_QUALITY;
-		Float custom_upscale_ratio = 1.0f;
-		Float sharpness = 0.5f;
+		float custom_upscale_ratio = 1.0f;
+		float sharpness = 0.5f;
 
 	private:
 		void CreateContext();

@@ -14,21 +14,21 @@ namespace adria
 	class PathTracingPass
 	{
 	public:
-		PathTracingPass(GfxDevice* gfx, Uint32 width, Uint32 height);
+		PathTracingPass(GfxDevice* gfx, uint32 width, uint32 height);
 		~PathTracingPass();
 		void AddPass(RenderGraph& rendergraph);
-		void OnResize(Uint32 w, Uint32 h);
-		Bool IsSupported() const;
+		void OnResize(uint32 w, uint32 h);
+		bool IsSupported() const;
 		void Reset();
 
 	private:
 		GfxDevice* gfx;
 		std::unique_ptr<GfxStateObject> path_tracing_so;
-		Uint32 width, height;
-		Bool is_supported;
+		uint32 width, height;
+		bool is_supported;
 		std::unique_ptr<GfxTexture> accumulation_texture = nullptr;
-		Sint32 accumulated_frames = 1;
-		Sint32 max_bounces = 3;
+		int32 accumulated_frames = 1;
+		int32 max_bounces = 3;
 
 	private:
 		void CreateStateObject();

@@ -14,17 +14,17 @@ namespace adria
 	class LensFlarePass : public PostEffect
 	{
 	public:
-		LensFlarePass(GfxDevice* gfx, Uint32 w, Uint32 h);
-		virtual Bool IsEnabled(PostProcessor const*) const override;
+		LensFlarePass(GfxDevice* gfx, uint32 w, uint32 h);
+		virtual bool IsEnabled(PostProcessor const*) const override;
 		virtual void AddPass(RenderGraph&, PostProcessor*) override;
-		virtual void OnResize(Uint32 w, Uint32 h) override;
+		virtual void OnResize(uint32 w, uint32 h) override;
 		virtual void OnSceneInitialized() override;
 		virtual void GUI() override;
-		virtual Bool IsGUIVisible(PostProcessor const* postprocessor) const;
+		virtual bool IsGUIVisible(PostProcessor const* postprocessor) const;
 
 	private:
 		GfxDevice* gfx;
-		Uint32 width, height;
+		uint32 width, height;
 		std::vector<TextureHandle> lens_flare_textures;
 		std::unique_ptr<GfxGraphicsPipelineState> lens_flare_pso;
 		std::unique_ptr<GfxComputePipelineState> procedural_lens_flare_pso;

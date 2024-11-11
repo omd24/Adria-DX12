@@ -15,7 +15,7 @@ using namespace DirectX;
 namespace adria
 {
 
-	GodRaysPass::GodRaysPass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h), copy_to_texture_pass(gfx, w, h)
+	GodRaysPass::GodRaysPass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h), copy_to_texture_pass(gfx, w, h)
 	{
 		CreatePSO();
 	}
@@ -47,7 +47,7 @@ namespace adria
 
 	}
 
-	void GodRaysPass::OnResize(Uint32 w, Uint32 h)
+	void GodRaysPass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 		copy_to_texture_pass.OnResize(w, h);
@@ -99,7 +99,7 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				Vector4 camera_position(frame_data.camera_position);
 				Vector4 light_pos = Vector4::Transform(light.position, XMMatrixTranslation(camera_position.x, 0.0f, camera_position.y));
@@ -107,15 +107,15 @@ namespace adria
 
 				struct GodRaysConstants
 				{
-					Float  light_screen_space_position_x;
-					Float  light_screen_space_position_y;
-					Float  density;
-					Float  weight;
-					Float  decay;
-					Float  exposure;
+					float  light_screen_space_position_x;
+					float  light_screen_space_position_y;
+					float  density;
+					float  weight;
+					float  decay;
+					float  exposure;
 
-					Uint32   sun_idx;
-					Uint32   output_idx;
+					uint32   sun_idx;
+					uint32   output_idx;
 				} constants =
 				{
 					.light_screen_space_position_x = 0.5f * light_pos.x / light_pos.w + 0.5f,

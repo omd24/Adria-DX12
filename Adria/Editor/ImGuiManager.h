@@ -11,7 +11,7 @@ namespace adria
 {
 
 	class GfxDevice;
-	template<Bool>
+	template<bool>
 	class GfxRingDescriptorAllocator;
 	class GfxCommandList;
 
@@ -31,16 +31,16 @@ namespace adria
 		void OnWindowEvent(WindowEventData const&) const;
 
 		void ToggleVisibility();
-		Bool IsVisible() const;
+		bool IsVisible() const;
 
-		GfxDescriptor AllocateDescriptorsGPU(Uint32 count = 1) const;
+		GfxDescriptor AllocateDescriptorsGPU(uint32 count = 1) const;
 
 	private:
 		GfxDevice* gfx;
 		std::string ini_file;
 		std::unique_ptr<GUIDescriptorAllocator> imgui_allocator;
-		Bool visible = true;
-		mutable Uint64 frame_count = 0;
+		bool visible = true;
+		mutable uint64 frame_count = 0;
 	};
 
 }

@@ -6,9 +6,12 @@ namespace adria
 
 	struct CameraParameters
 	{
-		Float near_plane;
-		Float far_plane;
-		Float fov;
+		float aspect_ratio;
+		float near_plane;
+		float far_plane;
+		float fov;
+		float speed;
+		float sensitivity;
 		Vector3 position;
 		Vector3 look_at;
 	};
@@ -28,41 +31,60 @@ namespace adria
 		{
 			return position;
 		}
-		Vector3 Forward() const;
+		Vector3 Up() const
+		{
+			return up_vector;
+		}
+		Vector3 Right() const
+		{
+			return right_vector;
+		}
+		Vector3 Forward() const
+		{
+			return look_vector;
+		}
 
-		Vector2 Jitter(Uint32 frame_index) const;
-		Float Near() const;
-		Float Far() const;
-		Float Fov() const;
-		Float AspectRatio() const;
+		Vector2 Jitter(uint32 frame_index) const;
+		float Near() const;
+		float Far() const;
+		float Fov() const;
+		float AspectRatio() const;
 
 		void SetPosition(Vector3 const& pos);
-		void SetNearAndFar(Float n, Float f);
-		void SetAspectRatio(Float ar);
-		void SetFov(Float fov);
+		void SetNearAndFar(float n, float f);
+		void SetAspectRatio(float ar);
+		void SetFov(float fov);
 
-		void Zoom(Sint32 increment);
-		void OnResize(Uint32 w, Uint32 h);
-		void Update(Float dt);
-		void Enable(Bool _enabled) { enabled = _enabled; }
-		Bool IsChanged() const { return changed; }
+		void Zoom(int32 increment);
+		void OnResize(uint32 w, uint32 h);
+		void Tick(float dt);
+		void Enable(bool _enabled) { enabled = _enabled; }
 	private:
+
+		Vector3 position;
+		Vector3 right_vector;
+		Vector3 up_vector;
+		Vector3 look_vector;
 		Matrix view_matrix;
 		Matrix projection_matrix;
 
-		Vector3 position;
-		Vector3 velocity;
-		Quaternion orientation;
-		Vector3 look_vector;
+		float aspect_ratio;
+		float fov;
+		float near_plane, far_plane;  
 
-		Float fov;
-		Float aspect_ratio;
-		Float near_plane, far_plane;
-		Bool  enabled;
-		Bool  changed;
+		float speed;
+		float sensitivity;
+		bool  enabled;
 
 	private:
-		void SetProjectionMatrix(Float fov, Float aspect, Float zn, Float zf);
+		void UpdateViewMatrix();
+		void Strafe(float dt);
+		void Walk(float dt);
+		void Jump(float dt);
+		void Pitch(int64 dy);
+		void Yaw(int64 dx);
+		void SetLens(float fov, float aspect, float zn, float zf);
+		void SetView();
 	};
 
 }

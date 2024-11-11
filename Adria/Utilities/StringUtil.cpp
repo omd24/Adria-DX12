@@ -1,74 +1,80 @@
+#include <algorithm>
 #include <sstream>
-#include <codecvt>
-#include <locale>
 #include "StringUtil.h"
 
 namespace adria
 {
 
-	std::wstring ToWideString(std::string const& str)
+	std::wstring ToWideString(std::string const& in)
 	{
-		int num_chars = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.length(), NULL, 0);
-		std::wstring wstr;
-		if (num_chars)
+		std::wstring out{};
+		out.reserve(in.length());
+		const char* ptr = in.data();
+		const char* const end = in.data() + in.length();
+
+		mbstate_t state{};
+		wchar_t wc;
+		while (size_t len = mbrtowc(&wc, ptr, end - ptr, &state))
 		{
-			wstr.resize(num_chars);
-			MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.length(), &wstr[0], num_chars);
+			if (len == static_cast<size_t>(-1)) // bad encoding
+				return std::wstring{};
+			if (len == static_cast<size_t>(-2))
+				break;
+			out.push_back(wc);
+			ptr += len;
 		}
-		return wstr;
+		return out;
 	}
-	std::string ToString(std::wstring const& wstr)
+	std::string ToString(std::wstring const& in)
 	{
-		int num_chars = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.length(), NULL, 0, NULL, NULL);
-		std::string str;
-		if (num_chars > 0)
+		std::string out{};
+		out.reserve(MB_CUR_MAX * in.length());
+
+		mbstate_t state{};
+		for (wchar_t wc : in)
 		{
-			str.resize(num_chars);
-			WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.length(), &str[0], num_chars, NULL, NULL);
+			char mb[8]{}; // ensure null-terminated for UTF-8 (maximum 4 byte)
+			const auto len = wcrtomb(mb, wc, &state);
+			out += std::string_view{ mb, len };
 		}
-		return str;
+		return out;
 	}
 
-	std::string ToLower(std::string const& str)
+	std::string ToLower(std::string const& in)
 	{
-		std::string out; out.resize(str.size());
-		for (Uint32 i = 0; i < str.size(); ++i)
-		{
-			out[i] = std::tolower(str[i]);
-		}
+		std::string out; out.resize(in.size());
+		std::transform(std::begin(in), std::end(in), std::begin(out), [](char c) {return std::tolower(c); });
 		return out;
 	}
-	std::string ToUpper(std::string const& str)
+	std::string ToUpper(std::string const& in)
 	{
-		std::string out; out.resize(str.size());
-		for (Uint32 i = 0; i < str.size(); ++i)
-		{
-			out[i] = std::toupper(str[i]);
-		}
+		std::string out; out.resize(in.size());
+		std::transform(std::begin(in), std::end(in), std::begin(out), [](char c) {return std::toupper(c); });
 		return out;
 	}
+
 	
-	Bool FromCString(const Char* in, int& out)
+	bool FromCString(const char* in, int& out)
 	{
 		std::istringstream iss(in);
 		iss >> out;
 		return !iss.fail() && iss.eof();
 	}
 
-	Bool FromCString(const Char* in, Float& out)
+	bool FromCString(const char* in, float& out)
 	{
 		std::istringstream iss(in);
 		iss >> out;
 		return !iss.fail() && iss.eof();
 	}
 
-	Bool FromCString(const Char* in, std::string& out)
+	bool FromCString(const char* in, std::string& out)
 	{
 		out = in;
 		return true;
 	}
 
-	Bool FromCString(const Char* in, Bool& out)
+	bool FromCString(const char* in, bool& out)
 	{
 		std::string str(in);
 		std::transform(str.begin(), str.end(), str.begin(), ::tolower);
@@ -85,10 +91,10 @@ namespace adria
 		return false;
 	}
 
-	Bool FromCString(Char const* in, Vector3& out)
+	bool FromCString(char const* in, Vector3& out)
 	{
 		std::istringstream iss(in);
-		Char open_parenthesis, comma1, comma2, close_parenthesis;
+		char open_parenthesis, comma1, comma2, close_parenthesis;
 		if (iss >> open_parenthesis >> out.x >> comma1 >> out.y >> comma2 >> out.z >> close_parenthesis) 
 		{
 			return open_parenthesis == '(' && comma1 == ',' && comma2 == ',' && close_parenthesis == ')' && iss.eof();
@@ -100,15 +106,15 @@ namespace adria
 	{
 		return std::to_string(val);
 	}
-	std::string FloatToString(Float val)
+	std::string FloatToString(float val)
 	{
 		return std::to_string(val);
 	}
-	std::string CStrToString(Char const* val)
+	std::string CStrToString(char const* val)
 	{
 		return val;
 	}
-	std::string BoolToString(Bool val)
+	std::string BoolToString(bool val)
 	{
 		return val ? "true" : "false";
 	}
@@ -118,7 +124,7 @@ namespace adria
 		return "(" + std::to_string(val.x) + "," + std::to_string(val.y) + "," + std::to_string(val.z) + ")";
 	}
 
-	std::vector<std::string> SplitString(const std::string& text, Char delimeter)
+	std::vector<std::string> SplitString(const std::string& text, char delimeter)
 	{
 		std::vector<std::string> tokens;
 		size_t start = 0, end = 0;

@@ -12,20 +12,20 @@ namespace adria
 	
 	class RainBlockerMapPass
 	{
-		static constexpr Uint32 BLOCKER_DIM = 256;
+		static constexpr uint32 BLOCKER_DIM = 256;
 	public:
-		RainBlockerMapPass(entt::registry& reg, GfxDevice* gfx, Uint32 w, Uint32 h);
+		RainBlockerMapPass(entt::registry& reg, GfxDevice* gfx, uint32 w, uint32 h);
 
 		void AddPass(RenderGraph& rendergraph);
-		void OnResize(Uint32 w, Uint32 h);
+		void OnResize(uint32 w, uint32 h);
 
-		Sint32 GetRainBlockerMapIdx() const;
+		int32 GetRainBlockerMapIdx() const;
 		Matrix const& GetViewProjection() const { return view_projection; }
 
 	private:
 		entt::registry& reg;
 		GfxDevice* gfx;
-		Uint32 width, height;
+		uint32 width, height;
 		Matrix view_projection;
 		std::unique_ptr<GfxTexture> blocker_map;
 		GfxDescriptor blocker_map_srv;

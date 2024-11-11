@@ -16,7 +16,7 @@ namespace adria
     TextureManager::TextureManager() {}
     TextureManager::~TextureManager() = default;
 
-	void TextureManager::Initialize(GfxDevice* _gfx, Uint32 max_textures)
+	void TextureManager::Initialize(GfxDevice* _gfx, uint32 max_textures)
 	{
         gfx = _gfx;
 	}
@@ -54,7 +54,7 @@ namespace adria
 			const Image* curr_img = &img;
 			while (curr_img)
 			{
-				for (Uint32 i = 0; i < desc.mip_levels; ++i)
+				for (uint32 i = 0; i < desc.mip_levels; ++i)
 				{
                     GfxTextureSubData& data = tex_data.emplace_back();
 					data.data = curr_img->MipData(i);
@@ -66,7 +66,7 @@ namespace adria
 
 			GfxTextureData init_data{};
 			init_data.sub_data = tex_data.data();
-			init_data.sub_count = (Uint32)tex_data.size();
+			init_data.sub_count = (uint32)tex_data.size();
             std::unique_ptr<GfxTexture> tex = gfx->CreateTexture(desc, init_data);
 
             texture_map[handle] = std::move(tex);
@@ -121,7 +121,7 @@ namespace adria
 		else return nullptr;
 	}
 
-	void TextureManager::EnableMipMaps(Bool mips)
+	void TextureManager::EnableMipMaps(bool mips)
     {
         mipmaps = mips;
     }
@@ -129,11 +129,11 @@ namespace adria
 	void TextureManager::OnSceneInitialized()
 	{
 		gfx->InitShaderVisibleAllocator(1024);
-		gfx->CopyDescriptors(1, gfx->GetDescriptorGPU((Uint32)DEFAULT_BLACK_TEXTURE_HANDLE), gfxcommon::GetCommonView(GfxCommonViewType::BlackTexture2D_SRV));
-		gfx->CopyDescriptors(1, gfx->GetDescriptorGPU((Uint32)DEFAULT_WHITE_TEXTURE_HANDLE), gfxcommon::GetCommonView(GfxCommonViewType::WhiteTexture2D_SRV));
-		gfx->CopyDescriptors(1, gfx->GetDescriptorGPU((Uint32)DEFAULT_NORMAL_TEXTURE_HANDLE), gfxcommon::GetCommonView(GfxCommonViewType::DefaultNormal2D_SRV));
-		gfx->CopyDescriptors(1, gfx->GetDescriptorGPU((Uint32)DEFAULT_METALLIC_ROUGHNESS_TEXTURE_HANDLE), gfxcommon::GetCommonView(GfxCommonViewType::MetallicRoughness2D_SRV));
-		for (Uint64 i = TEXTURE_MANAGER_START_HANDLE; i <= handle; ++i)
+		gfx->CopyDescriptors(1, gfx->GetDescriptorGPU((uint32)DEFAULT_BLACK_TEXTURE_HANDLE), gfxcommon::GetCommonView(GfxCommonViewType::BlackTexture2D_SRV));
+		gfx->CopyDescriptors(1, gfx->GetDescriptorGPU((uint32)DEFAULT_WHITE_TEXTURE_HANDLE), gfxcommon::GetCommonView(GfxCommonViewType::WhiteTexture2D_SRV));
+		gfx->CopyDescriptors(1, gfx->GetDescriptorGPU((uint32)DEFAULT_NORMAL_TEXTURE_HANDLE), gfxcommon::GetCommonView(GfxCommonViewType::DefaultNormal2D_SRV));
+		gfx->CopyDescriptors(1, gfx->GetDescriptorGPU((uint32)DEFAULT_METALLIC_ROUGHNESS_TEXTURE_HANDLE), gfxcommon::GetCommonView(GfxCommonViewType::MetallicRoughness2D_SRV));
+		for (uint64 i = TEXTURE_MANAGER_START_HANDLE; i <= handle; ++i)
         {
             GfxTexture* texture = texture_map[TextureHandle(i)].get();
             if (texture)
@@ -144,14 +144,14 @@ namespace adria
         is_scene_initialized = true;
 	}
 
-	void TextureManager::CreateViewForTexture(TextureHandle handle, Bool flag)
+	void TextureManager::CreateViewForTexture(TextureHandle handle, bool flag)
 	{
         if (!is_scene_initialized && !flag) return;
 
 		GfxTexture* texture = texture_map[handle].get();
 		ADRIA_ASSERT(texture);
         texture_srv_map[handle] = gfx->CreateTextureSRV(texture);
-        gfx->CopyDescriptors(1, gfx->GetDescriptorGPU((Uint32)handle), texture_srv_map[handle]);
+        gfx->CopyDescriptors(1, gfx->GetDescriptorGPU((uint32)handle), texture_srv_map[handle]);
 	}
 
 }

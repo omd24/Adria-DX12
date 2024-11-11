@@ -12,32 +12,32 @@ namespace adria
 	{
 		struct CloudParameters
 		{
-			Sint32 shape_noise_frequency = 4;
-			Sint32 shape_noise_resolution = 128;
-			Sint32 detail_noise_frequency = 6;
-			Sint32 detail_noise_resolution = 32;
+			int32 shape_noise_frequency = 4;
+			int32 shape_noise_resolution = 128;
+			int32 detail_noise_frequency = 6;
+			int32 detail_noise_resolution = 32;
 
-			Sint32 max_num_steps = 64;
-			Float cloud_min_height = 1500.0f;
-			Float cloud_max_height = 4000.0f;
-			Float shape_noise_scale = 0.3f;
-			Float detail_noise_scale = 3.2f;
-			Float detail_noise_modifier = 0.33f;
-			Float cloud_coverage = 0.625f;
-			Float cloud_type = 0.5f;
-			Float global_density = 0.25f;
+			int32 max_num_steps = 64;
+			float cloud_min_height = 1500.0f;
+			float cloud_max_height = 4000.0f;
+			float shape_noise_scale = 0.3f;
+			float detail_noise_scale = 3.2f;
+			float detail_noise_modifier = 0.33f;
+			float cloud_coverage = 0.625f;
+			float cloud_type = 0.5f;
+			float global_density = 0.25f;
 
-			Float planet_radius = 35000.0f;
-			Float light_step_length = 64.0f;
-			Float light_cone_radius = 0.4f;
+			float planet_radius = 35000.0f;
+			float light_step_length = 64.0f;
+			float light_cone_radius = 0.4f;
 
-			Float cloud_base_color[3] = { 0.78f, 0.86f, 1.0f };
-			Float cloud_top_color[3] = { 1.0f, 1.0f, 1.0f };
-			Float precipitation = 1.78f;
-			Float ambient_light_factor = 0.12f;
-			Float sun_light_factor = 0.7f;
-			Float henyey_greenstein_g_forward = 0.4f;
-			Float henyey_greenstein_g_backward = 0.179f;
+			float cloud_base_color[3] = { 0.78f, 0.86f, 1.0f };
+			float cloud_top_color[3] = { 1.0f, 1.0f, 1.0f };
+			float precipitation = 1.78f;
+			float ambient_light_factor = 0.12f;
+			float sun_light_factor = 0.7f;
+			float henyey_greenstein_g_forward = 0.4f;
+			float henyey_greenstein_g_backward = 0.179f;
 		};
 
 		enum CloudResolution
@@ -48,20 +48,20 @@ namespace adria
 		};
 
 	public:
-		VolumetricCloudsPass(GfxDevice* gfx, Uint32 w, Uint32 h);
+		VolumetricCloudsPass(GfxDevice* gfx, uint32 w, uint32 h);
 		~VolumetricCloudsPass();
 
-		virtual Bool IsEnabled(PostProcessor const*) const override;
+		virtual bool IsEnabled(PostProcessor const*) const override;
 		virtual void AddPass(RenderGraph&, PostProcessor*) override;
-		virtual void OnResize(Uint32 w, Uint32 h) override;
+		virtual void OnResize(uint32 w, uint32 h) override;
 		virtual void OnSceneInitialized() override;
 		virtual void GUI() override;
 
-		void OnRainEvent(Bool enabled);
+		void OnRainEvent(bool enabled);
 
 	private:
 		GfxDevice* gfx;
-		Uint32 width, height;
+		uint32 width, height;
 
 		std::unique_ptr<GfxTexture> prev_clouds;
 		std::unique_ptr<GfxTexture> cloud_detail_noise;
@@ -70,8 +70,8 @@ namespace adria
 
 		CloudParameters params{};
 		CloudResolution resolution = CloudResolution_Full;
-		Bool should_generate_textures = false;
-		Bool temporal_reprojection = true;
+		bool should_generate_textures = false;
+		bool temporal_reprojection = true;
 		std::unique_ptr<GfxComputePipelineStatePermutations> clouds_psos;
 		std::unique_ptr<GfxComputePipelineState> clouds_type_pso;
 		std::unique_ptr<GfxComputePipelineState> clouds_shape_pso;

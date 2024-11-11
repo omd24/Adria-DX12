@@ -11,13 +11,13 @@ namespace adria
 	class GBufferPass
 	{
 	public:
-		GBufferPass(entt::registry& reg, GfxDevice* gfx, Uint32 w, Uint32 h);
+		GBufferPass(entt::registry& reg, GfxDevice* gfx, uint32 w, uint32 h);
 		~GBufferPass();
 
 		void AddPass(RenderGraph& rendergraph);
-		void OnResize(Uint32 w, Uint32 h);
+		void OnResize(uint32 w, uint32 h);
 
-		void OnRainEvent(Bool enabled)
+		void OnRainEvent(bool enabled)
 		{
 			use_rain_pso = enabled;
 		}
@@ -25,8 +25,8 @@ namespace adria
 	private:
 		entt::registry& reg;
 		GfxDevice* gfx;
-		Uint32 width, height;
-		Bool use_rain_pso = false;
+		uint32 width, height;
+		bool use_rain_pso = false;
 		std::unique_ptr<GfxGraphicsPipelineStatePermutations> gbuffer_psos;
 
 	private:

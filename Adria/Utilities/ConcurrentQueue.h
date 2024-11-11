@@ -38,7 +38,7 @@ namespace adria
             queue.pop();
         }
 
-        Bool TryPop(T& value)
+        bool TryPop(T& value)
         {
             std::lock_guard<std::mutex> lock(mutex);
             if (queue.empty()) return false;
@@ -48,13 +48,13 @@ namespace adria
             return true;
         }
 
-        Bool Empty() const
+        bool Empty() const
         {
             std::lock_guard<std::mutex> lock(mutex);
             return queue.empty();
         }
 
-        Uint64 Size() const
+        uint64 Size() const
         {
             std::lock_guard<std::mutex> lock(mutex);
             return queue.size();

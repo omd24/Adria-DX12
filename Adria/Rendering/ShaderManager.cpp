@@ -538,7 +538,7 @@ namespace adria
 			return SM_6_7;
 		}
 
-		void CompileShader(GfxShaderKey const& shader, Bool bypass_cache = false)
+		void CompileShader(GfxShaderKey const& shader, bool bypass_cache = false)
 		{
 			if (!shader.IsValid()) return;
 
@@ -555,7 +555,7 @@ namespace adria
 			shader_desc.defines = shader.GetDefines();
 
 			GfxShaderCompileOutput output;
-			Bool compile_result = GfxShaderCompiler::CompileShader(shader_desc, output, bypass_cache);
+			bool compile_result = GfxShaderCompiler::CompileShader(shader_desc, output, bypass_cache);
 			ADRIA_ASSERT(compile_result);
 			if (!compile_result) return;
 
@@ -569,7 +569,7 @@ namespace adria
 		{
 			for (auto const& [shader, files] : dependent_files_map)
 			{
-				for (Uint64 i = 0; i < files.size(); ++i)
+				for (uint64 i = 0; i < files.size(); ++i)
 				{
 					fs::path const& file = files[i];
 					if (fs::equivalent(file, fs::path(filename))) CompileShader(shader, i != 0);

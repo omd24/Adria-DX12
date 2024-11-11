@@ -5,7 +5,7 @@
 
 namespace adria
 {
-    enum class GfxLoadAccessOp : Uint8
+    enum class GfxLoadAccessOp : uint8
     {
         Discard,
         Preserve,
@@ -13,7 +13,7 @@ namespace adria
         NoAccess
     };
 
-	enum class GfxStoreAccessOp : Uint8
+	enum class GfxStoreAccessOp : uint8
 	{
 		Discard,
 		Preserve,
@@ -21,7 +21,7 @@ namespace adria
 		NoAccess
 	};
 
-    enum GfxRenderPassFlagBit : Uint32
+    enum GfxRenderPassFlagBit : uint32
     {
         GfxRenderPassFlagBit_None = 0x0,
         GfxRenderPassFlagBit_ReadOnlyDepth = 0x1,
@@ -31,7 +31,7 @@ namespace adria
         GfxRenderPassFlagBit_ResumingPass = 0x10,
     };
     ENABLE_ENUM_BIT_OPERATORS(GfxRenderPassFlagBit);
-    using GfxRenderPassFlags = Uint32;
+    using GfxRenderPassFlags = uint32;
 
     struct GfxColorAttachmentDesc
     {
@@ -56,8 +56,8 @@ namespace adria
         std::vector<GfxColorAttachmentDesc> rtv_attachments{};
         std::optional<GfxDepthAttachmentDesc> dsv_attachment = std::nullopt;
         GfxRenderPassFlags flags = GfxRenderPassFlagBit_None;
-        Uint32 width = 0;
-        Uint32 height = 0;
-        Bool legacy = false;
+        uint32 width = 0;
+        uint32 height = 0;
+        bool legacy = false;
     };
 }

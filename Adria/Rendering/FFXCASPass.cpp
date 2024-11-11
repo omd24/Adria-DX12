@@ -10,9 +10,9 @@
 
 namespace adria
 {
-	static TAutoConsoleVariable<Bool> CAS("r.CAS", false, "Enable or Disable Contrast-Adaptive Sharpening, TAA must be enabled");
+	static TAutoConsoleVariable<bool> CAS("r.CAS", false, "Enable or Disable Contrast-Adaptive Sharpening, TAA must be enabled");
 
-	FFXCASPass::FFXCASPass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h), ffx_interface(nullptr)
+	FFXCASPass::FFXCASPass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h), ffx_interface(nullptr)
 	{
 		if (!gfx->GetCapabilities().SupportsShaderModel(SM_6_6)) return;
 		sprintf(name_version, "FFX CAS %d.%d.%d", FFX_CAS_VERSION_MAJOR, FFX_CAS_VERSION_MINOR, FFX_CAS_VERSION_PATCH);
@@ -66,14 +66,14 @@ namespace adria
 		postprocessor->SetFinalResource(RG_NAME(FFXCASOutput));
 	}
 
-	void FFXCASPass::OnResize(Uint32 w, Uint32 h)
+	void FFXCASPass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 		DestroyContext();
 		CreateContext();
 	}
 
-	Bool FFXCASPass::IsEnabled(PostProcessor const*) const
+	bool FFXCASPass::IsEnabled(PostProcessor const*) const
 	{
 		return CAS.Get();
 	}
@@ -94,7 +94,7 @@ namespace adria
 			}, GUICommandGroup_PostProcessing, GUICommandSubGroup_Antialiasing);
 	}
 
-	Bool FFXCASPass::IsGUIVisible(PostProcessor const* postprocessor) const
+	bool FFXCASPass::IsGUIVisible(PostProcessor const* postprocessor) const
 	{
 		return postprocessor->HasTAA();
 	}

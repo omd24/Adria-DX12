@@ -11,9 +11,9 @@
 
 namespace adria
 {
-	static TAutoConsoleVariable<Bool> RTR("r.RTR", true, "0 - Disabled, 1 - Enabled");
+	static TAutoConsoleVariable<bool> RTR("r.RTR", true, "0 - Disabled, 1 - Enabled");
 	
-	RayTracedReflectionsPass::RayTracedReflectionsPass(GfxDevice* gfx, Uint32 width, Uint32 height)
+	RayTracedReflectionsPass::RayTracedReflectionsPass(GfxDevice* gfx, uint32 width, uint32 height)
 		: gfx(gfx), width(width), height(height), blur_pass(gfx), copy_to_texture_pass(gfx, width, height)
 	{
 		is_supported = gfx->GetCapabilities().CheckRayTracingSupport(RayTracingSupport::Tier1_1);
@@ -64,15 +64,15 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct RayTracedReflectionsConstants
 				{
-					Float   roughness_scale;
-					Uint32  depth_idx;
-					Uint32  normal_idx;
-					Uint32  albedo_idx;
-					Uint32  output_idx;
+					float   roughness_scale;
+					uint32  depth_idx;
+					uint32  normal_idx;
+					uint32  albedo_idx;
+					uint32  output_idx;
 				} constants =
 				{
 					.roughness_scale = reflection_roughness_scale,
@@ -92,14 +92,14 @@ namespace adria
 		copy_to_texture_pass.AddPass(rg, postprocessor->GetFinalResource(), RG_NAME(RTR_Output), BlendMode::AdditiveBlend);
 	}
 
-	void RayTracedReflectionsPass::OnResize(Uint32 w, Uint32 h)
+	void RayTracedReflectionsPass::OnResize(uint32 w, uint32 h)
 	{
 		if (!IsSupported()) return;
 		width = w, height = h;
 		copy_to_texture_pass.OnResize(w, h);
 	}
 
-	Bool RayTracedReflectionsPass::IsEnabled(PostProcessor const*) const
+	bool RayTracedReflectionsPass::IsEnabled(PostProcessor const*) const
 	{
 		return RTR.Get();
 	}
@@ -121,7 +121,7 @@ namespace adria
 			}, GUICommandGroup_PostProcessing, GUICommandSubGroup_Reflection);
 	}
 
-	Bool RayTracedReflectionsPass::IsSupported() const
+	bool RayTracedReflectionsPass::IsSupported() const
 	{
 		return is_supported;
 	}
@@ -139,7 +139,7 @@ namespace adria
 			rtr_state_object_builder.AddSubObject(dxil_lib_desc);
 
 			D3D12_RAYTRACING_SHADER_CONFIG rtr_shader_config{};
-			rtr_shader_config.MaxPayloadSizeInBytes = sizeof(Float) * 4;
+			rtr_shader_config.MaxPayloadSizeInBytes = sizeof(float) * 4;
 			rtr_shader_config.MaxAttributeSizeInBytes = D3D12_RAYTRACING_MAX_ATTRIBUTE_SIZE_IN_BYTES;
 			rtr_state_object_builder.AddSubObject(rtr_shader_config);
 

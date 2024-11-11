@@ -9,7 +9,7 @@ namespace adria
 	class GfxDevice;
 	class RenderGraph;
 
-	enum class DebugRendererMode : Bool
+	enum class DebugRendererMode : bool
 	{
 		Transient,
 		Persistent
@@ -19,12 +19,12 @@ namespace adria
 	{
 		friend class Singleton<DebugRenderer>;
 
-		static Uint32 ColorToUint(Color const& col);
+		static uint32 ColorToUint(Color const& col);
 
 		struct DebugVertex
 		{
 			Vector3 position = Vector3(0,0,0);
-			Uint32 color = 0xffffffff;
+			uint32 color = 0xffffffff;
 		};
 		struct DebugLine
 		{
@@ -54,21 +54,21 @@ namespace adria
 			DebugVertex vertex2;
 		};
 	public:
-		void Initialize(GfxDevice* gfx, Uint32 width, Uint32 height);
+		void Initialize(GfxDevice* gfx, uint32 width, uint32 height);
 		void Destroy();
-		void OnResize(Uint32 w, Uint32 h);
+		void OnResize(uint32 w, uint32 h);
 
 		void Render(RenderGraph& rg);
 
 		void AddLine(Vector3 const& start, Vector3 const& end, Color color);
 		void AddRay(Vector3 const& origin, Vector3 const& direction, Color color);
-		void AddTriangle(Vector3 const& a, Vector3 const& b, Vector3 const& c, Color color, Bool wireframe = false);
-		void AddQuad(Vector3 const& a, Vector3 const& b, Vector3 const& c, Vector3 const& d, Color color, Bool wireframe = false);
-		void AddBox(Vector3 const& center, Vector3 const& extents, Color color, Bool wireframe = true);
-		void AddBoundingBox(BoundingBox const& bounding_box, Color color, Bool wireframe = true);
-		void AddBoundingBox(BoundingBox const& bounding_box, Matrix const& transform, Color color, Bool wireframe = true);
-		void AddSphere(Vector3 const& center, Float radius, Color color, Bool wireframe = true);
-		void AddSphere(BoundingSphere const& sphere, Color color, Bool wireframe = true);
+		void AddTriangle(Vector3 const& a, Vector3 const& b, Vector3 const& c, Color color, bool wireframe = false);
+		void AddQuad(Vector3 const& a, Vector3 const& b, Vector3 const& c, Vector3 const& d, Color color, bool wireframe = false);
+		void AddBox(Vector3 const& center, Vector3 const& extents, Color color, bool wireframe = true);
+		void AddBoundingBox(BoundingBox const& bounding_box, Color color, bool wireframe = true);
+		void AddBoundingBox(BoundingBox const& bounding_box, Matrix const& transform, Color color, bool wireframe = true);
+		void AddSphere(Vector3 const& center, float radius, Color color, bool wireframe = true);
+		void AddSphere(BoundingSphere const& sphere, Color color, bool wireframe = true);
 		void AddFrustum(BoundingFrustum const& frustum, Color color);
 
 		void SetMode(DebugRendererMode _mode) { mode = _mode; }
@@ -81,7 +81,7 @@ namespace adria
 		DebugRendererMode mode = DebugRendererMode::Transient;
 		std::vector<DebugLine> transient_lines, persistent_lines;
 		std::vector<DebugTriangle> transient_triangles, persistent_triangles;
-		Uint32 width = 0, height = 0;
+		uint32 width = 0, height = 0;
 		std::unique_ptr<GfxGraphicsPipelineStatePermutations> debug_psos;
 
 	private:

@@ -34,7 +34,7 @@ namespace adria
 {
 	static TAutoConsoleVariable<int>  AmbientOcclusion("r.AmbientOcclusion", 1, "0 - No AO, 1 - SSAO, 2 - HBAO, 3 - CACAO, 4 - RTAO");
 	
-	enum AmbientOcclusionType : Uint8
+	enum AmbientOcclusionType : uint8
 	{
 		AmbientOcclusionType_None,
 		AmbientOcclusionType_SSAO,
@@ -43,7 +43,7 @@ namespace adria
 		AmbientOcclusionType_RTAO
 	};
 
-	PostProcessor::PostProcessor(GfxDevice* gfx, entt::registry& reg, Uint32 width, Uint32 height)
+	PostProcessor::PostProcessor(GfxDevice* gfx, entt::registry& reg, uint32 width, uint32 height)
 		: gfx(gfx), reg(reg), display_width(width), display_height(height), render_width(width), render_height(height),
 		ssao_pass(gfx, width, height), hbao_pass(gfx, width, height), rtao_pass(gfx, width, height), cacao_pass(gfx, width, height)
 	{
@@ -54,7 +54,7 @@ namespace adria
 
 	PostProcessor::~PostProcessor() = default;
 
-	void PostProcessor::OnRainEvent(Bool enabled)
+	void PostProcessor::OnRainEvent(bool enabled)
 	{
 		GetPostEffect<VolumetricCloudsPass>()->OnRainEvent(enabled);
 	}
@@ -75,7 +75,7 @@ namespace adria
 		rg.ImportTexture(RG_NAME(HistoryBuffer), history_buffer.get());
 
 		final_resource = RG_NAME(HDR_RenderTarget);
-		for (Uint32 i = 0; i < PostEffectType_Count; ++i)
+		for (uint32 i = 0; i < PostEffectType_Count; ++i)
 		{
 			if (post_effects[i]->IsEnabled(this)) post_effects[i]->AddPass(rg, this);
 		}
@@ -119,10 +119,10 @@ namespace adria
 		}
 	}
 
-	void PostProcessor::OnResize(Uint32 w, Uint32 h)
+	void PostProcessor::OnResize(uint32 w, uint32 h)
 	{
 		display_width = w, display_height = h;
-		for (Uint32 i = PostEffectType_Upscaler; i < PostEffectType_Count; ++i)
+		for (uint32 i = PostEffectType_Upscaler; i < PostEffectType_Count; ++i)
 		{
 			post_effects[i]->OnResize(w, h);
 		}
@@ -136,7 +136,7 @@ namespace adria
 		}
 	}
 
-	void PostProcessor::OnRenderResolutionChanged(Uint32 w, Uint32 h)
+	void PostProcessor::OnRenderResolutionChanged(uint32 w, uint32 h)
 	{
 		render_width = w, render_height = h;
 
@@ -145,7 +145,7 @@ namespace adria
 		cacao_pass.OnResize(w, h);
 		rtao_pass.OnResize(w, h);
 
-		for (Uint32 i = 0; i < PostEffectType_Upscaler; ++i)
+		for (uint32 i = 0; i < PostEffectType_Upscaler; ++i)
 		{
 			post_effects[i]->OnResize(w, h);
 		}
@@ -166,32 +166,32 @@ namespace adria
 		return final_resource;
 	}
 
-	Bool PostProcessor::HasTAA() const
+	bool PostProcessor::HasTAA() const
 	{
 		return post_effects[PostEffectType_TAA]->IsEnabled(this);
 	}
 
-	Bool PostProcessor::HasFXAA() const
+	bool PostProcessor::HasFXAA() const
 	{
 		return post_effects[PostEffectType_FXAA]->IsEnabled(this);
 	}
 
-	Bool PostProcessor::IsPathTracing() const
+	bool PostProcessor::IsPathTracing() const
 	{
 		return is_path_tracing_path;
 	}
 
-	Bool PostProcessor::NeedsVelocityBuffer() const
+	bool PostProcessor::NeedsVelocityBuffer() const
 	{
 		return HasTAA() || HasUpscaler() || post_effects[PostEffectType_Clouds]->IsEnabled(this) || post_effects[PostEffectType_MotionBlur]->IsEnabled(this);
 	}
 
-	Bool PostProcessor::NeedsHistoryBuffer() const
+	bool PostProcessor::NeedsHistoryBuffer() const
 	{
 		return true;
 	}
 
-	Bool PostProcessor::HasUpscaler() const
+	bool PostProcessor::HasUpscaler() const
 	{
 		return post_effects[PostEffectType_Upscaler]->IsEnabled(this);
 	}

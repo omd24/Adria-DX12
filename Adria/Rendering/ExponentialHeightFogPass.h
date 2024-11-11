@@ -12,26 +12,26 @@ namespace adria
 	{
 		struct FogParameters
 		{
-			Float  fog_falloff		= 0.125f;
-			Float  fog_density		= 3.0f;
-			Float  fog_height		= 100.0f;
-			Float  fog_min_opacity  = 0.7f;
-			Float  fog_start		= 0.0f;
-			Float  fog_cutoff_distance = 0.0f;
-			Float  fog_color[3]		= { 0.5f, 0.6f, 1.0f };
+			float  fog_falloff		= 0.125f;
+			float  fog_density		= 3.0f;
+			float  fog_height		= 100.0f;
+			float  fog_min_opacity  = 0.7f;
+			float  fog_start		= 0.0f;
+			float  fog_cutoff_distance = 0.0f;
+			float  fog_color[3]		= { 0.5f, 0.6f, 1.0f };
 		};
 
 	public:
-		ExponentialHeightFogPass(GfxDevice* gfx, Uint32 w, Uint32 h);
+		ExponentialHeightFogPass(GfxDevice* gfx, uint32 w, uint32 h);
 
-		virtual void OnResize(Uint32 w, Uint32 h) override;
+		virtual void OnResize(uint32 w, uint32 h) override;
 		virtual void AddPass(RenderGraph&, PostProcessor*) override;
-		virtual Bool IsEnabled(PostProcessor const*) const override;
+		virtual bool IsEnabled(PostProcessor const*) const override;
 		virtual void GUI() override;
 
 	private:
 		GfxDevice* gfx;
-		Uint32 width, height;
+		uint32 width, height;
 		std::unique_ptr<GfxComputePipelineState> fog_pso;
 		FogParameters params;
 

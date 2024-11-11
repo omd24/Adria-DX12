@@ -2,7 +2,7 @@
 
 namespace adria
 {
-	enum ShaderID : Uint8;
+	enum ShaderID : uint8;
 	struct GfxShaderDefine;
 
 	class GfxShaderKey
@@ -21,25 +21,25 @@ namespace adria
 		void Init(ShaderID shader_id);
 		void operator=(ShaderID shader_id);
 
-		void AddDefine(Char const* name, Char const* value = "");
-		Bool IsValid() const;
+		void AddDefine(char const* name, char const* value = "");
+		bool IsValid() const;
 
 		std::vector<GfxShaderDefine> const& GetDefines() const;
 		ShaderID GetShaderID() const;
 
 		operator ShaderID() const;
-		Bool operator==(GfxShaderKey const& key) const;
+		bool operator==(GfxShaderKey const& key) const;
 
 	private:
 		std::unique_ptr<Impl> impl;
 
 	private:
-		Uint64 GetHash() const;
+		uint64 GetHash() const;
 	};
 
 	struct GfxShaderKeyHash
 	{
-		Uint64 operator()(GfxShaderKey const& key) const
+		uint64 operator()(GfxShaderKey const& key) const
 		{
 			return key.GetHash();
 		}

@@ -11,12 +11,12 @@
 
 namespace adria
 {
-	static constexpr Uint32 VOXEL_TEXEL_SIZE_X = 8;
-	static constexpr Uint32 VOXEL_TEXEL_SIZE_Y = 8;
-	static constexpr Uint32 VOXEL_GRID_SIZE_Z  = 128;
+	static constexpr uint32 VOXEL_TEXEL_SIZE_X = 8;
+	static constexpr uint32 VOXEL_TEXEL_SIZE_Y = 8;
+	static constexpr uint32 VOXEL_GRID_SIZE_Z  = 128;
 
 
-	VolumetricFogPass::VolumetricFogPass(GfxDevice* gfx, entt::registry& reg, Uint32 w, Uint32 h) : gfx(gfx), reg(reg), width(w), height(h)
+	VolumetricFogPass::VolumetricFogPass(GfxDevice* gfx, entt::registry& reg, uint32 w, uint32 h) : gfx(gfx), reg(reg), width(w), height(h)
 	{
 		CreatePSOs();
 		CreateLightInjectionHistoryTexture();
@@ -25,7 +25,7 @@ namespace adria
 	void VolumetricFogPass::OnSceneInitialized()
 	{
 		std::string blue_noise_base_path = paths::TexturesDir + "BlueNoise/";
-		for (Uint32 i = 0; i < BLUE_NOISE_TEXTURE_COUNT; ++i)
+		for (uint32 i = 0; i < BLUE_NOISE_TEXTURE_COUNT; ++i)
 		{
 			std::string blue_noise_texture_path = blue_noise_base_path + "LDR_LLL1_" + std::to_string(i) + ".png";
 			blue_noise_handles[i] = g_TextureManager.LoadTexture(blue_noise_texture_path);
@@ -61,11 +61,11 @@ namespace adria
 				FogVolume& fog_volume = fog_volumes[0];
 				if (ImGui::TreeNode("Volumetric Fog"))
 				{
-					Bool update_fog_volume_buffer = false;
+					bool update_fog_volume_buffer = false;
 					update_fog_volume_buffer |= ImGui::SliderFloat("Density Base", &fog_volume.density_base, 0.0f, 0.02f);
 					update_fog_volume_buffer |= ImGui::SliderFloat("Density Change", &fog_volume.density_change, 0.0f, 0.05f);
 					Vector3 fog_color = fog_volume.color.ToVector3();
-					update_fog_volume_buffer |= ImGui::ColorEdit3("Fog Color", (Float*)&fog_color);
+					update_fog_volume_buffer |= ImGui::ColorEdit3("Fog Color", (float*)&fog_color);
 					fog_volume.color = Color(fog_color);
 
 					if (update_fog_volume_buffer)
@@ -105,8 +105,8 @@ namespace adria
 		rg.AddPass<LightInjectionPassData>("Volumetric Fog Light Injection Pass",
 			[=](LightInjectionPassData& data, RenderGraphBuilder& builder)
 			{
-				Uint32 const voxel_grid_width = DivideAndRoundUp(width, VOXEL_TEXEL_SIZE_X);
-				Uint32 const voxel_grid_height = DivideAndRoundUp(height, VOXEL_TEXEL_SIZE_Y);
+				uint32 const voxel_grid_width = DivideAndRoundUp(width, VOXEL_TEXEL_SIZE_X);
+				uint32 const voxel_grid_height = DivideAndRoundUp(height, VOXEL_TEXEL_SIZE_Y);
 
 				RGTextureDesc light_injection_target_desc{};
 				light_injection_target_desc.type = GfxTextureType_3D;
@@ -123,18 +123,18 @@ namespace adria
 			{
 				GfxDevice* gfx = cmd_list->GetDevice();
 				
-				Uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
+				uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i + 0), ctx.GetReadWriteTexture(data.light_injection_target));
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i + 1), ctx.GetReadOnlyTexture(data.light_injection_target_history));
 				
 				struct LightInjectionConstants
 				{
 					Vector3u voxel_grid_dimensions;
-					Uint32 fog_volumes_count;
-					Uint32 fog_volume_buffer_idx;
-					Uint32 light_injection_target_idx;
-					Uint32 light_injection_target_history_idx;
-					Uint32 blue_noise_idx;
+					uint32 fog_volumes_count;
+					uint32 fog_volume_buffer_idx;
+					uint32 light_injection_target_idx;
+					uint32 light_injection_target_history_idx;
+					uint32 blue_noise_idx;
 				} constants =
 				{
 					.voxel_grid_dimensions = Vector3u(light_injection_target_history->GetWidth(), light_injection_target_history->GetHeight(), light_injection_target_history->GetDepth()),
@@ -142,7 +142,7 @@ namespace adria
 					.fog_volume_buffer_idx = fog_volume_buffer_idx,
 					.light_injection_target_idx = i,
 					.light_injection_target_history_idx = i + 1,
-					.blue_noise_idx = (Uint32)blue_noise_handles[gfx->GetFrameIndex() % BLUE_NOISE_TEXTURE_COUNT]
+					.blue_noise_idx = (uint32)blue_noise_handles[gfx->GetFrameIndex() % BLUE_NOISE_TEXTURE_COUNT]
 				};
 				
 				cmd_list->SetPipelineState(light_injection_pso.get());
@@ -169,8 +169,8 @@ namespace adria
 		rg.AddPass<ScatteringIntegrationPassData>("Volumetric Fog Scattering Integration Pass",
 			[=](ScatteringIntegrationPassData& data, RenderGraphBuilder& builder)
 			{
-				Uint32 const voxel_grid_width = DivideAndRoundUp(width, VOXEL_TEXEL_SIZE_X);
-				Uint32 const voxel_grid_height = DivideAndRoundUp(height, VOXEL_TEXEL_SIZE_Y);
+				uint32 const voxel_grid_width = DivideAndRoundUp(width, VOXEL_TEXEL_SIZE_X);
+				uint32 const voxel_grid_height = DivideAndRoundUp(height, VOXEL_TEXEL_SIZE_Y);
 
 				RGTextureDesc voxel_desc{};
 				voxel_desc.type = GfxTextureType_3D;
@@ -187,15 +187,15 @@ namespace adria
 			{
 				GfxDevice* gfx = cmd_list->GetDevice();
 
-				Uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
+				uint32 i = gfx->AllocateDescriptorsGPU(2).GetIndex();
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i + 0), ctx.GetReadOnlyTexture(data.injected_light));
 				gfx->CopyDescriptors(1, gfx->GetDescriptorGPU(i + 1), ctx.GetReadWriteTexture(data.integrated_scattering));
 
 				struct ScatteringAccumulationConstants
 				{
 					Vector3u voxel_grid_dimensions;
-					Uint32   injected_light_idx;
-					Uint32   integrated_scattering_idx;
+					uint32   injected_light_idx;
+					uint32   integrated_scattering_idx;
 				} constants =
 				{
 					.voxel_grid_dimensions = Vector3u(light_injection_target_history->GetWidth(), light_injection_target_history->GetHeight(), light_injection_target_history->GetDepth()),
@@ -237,7 +237,7 @@ namespace adria
 				GfxDescriptor src_descriptors[] = { context.GetReadOnlyTexture(data.fog), context.GetReadOnlyTexture(data.depth) };
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				cmd_list->SetRootConstant(1, i, 0);
 				cmd_list->SetRootConstant(1, i + 1, 1);
@@ -275,8 +275,8 @@ namespace adria
 
 	void VolumetricFogPass::CreateLightInjectionHistoryTexture()
 	{
-		Uint32 const voxel_grid_width = DivideAndRoundUp(width, VOXEL_TEXEL_SIZE_X);
-		Uint32 const voxel_grid_height = DivideAndRoundUp(height, VOXEL_TEXEL_SIZE_Y);
+		uint32 const voxel_grid_width = DivideAndRoundUp(width, VOXEL_TEXEL_SIZE_X);
+		uint32 const voxel_grid_height = DivideAndRoundUp(height, VOXEL_TEXEL_SIZE_Y);
 		if (light_injection_target_history && light_injection_target_history->GetWidth() == voxel_grid_width &&
 			light_injection_target_history->GetHeight() == voxel_grid_height)
 		{

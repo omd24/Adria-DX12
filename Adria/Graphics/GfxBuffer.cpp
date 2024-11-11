@@ -129,25 +129,25 @@ namespace adria
 		return desc;
 	}
 
-	Uint64 GfxBuffer::GetGpuAddress() const
+	uint64 GfxBuffer::GetGpuAddress() const
 	{
 		return resource->GetGPUVirtualAddress();
 	}
 
-	Uint64 GfxBuffer::GetSize() const
+	uint64 GfxBuffer::GetSize() const
 	{
 		return desc.size;
 	}
 
-	Uint32 GfxBuffer::GetStride() const
+	uint32 GfxBuffer::GetStride() const
 	{
 		return desc.stride;
 	}
 
-	Uint32 GfxBuffer::GetCount() const
+	uint32 GfxBuffer::GetCount() const
 	{
 		ADRIA_ASSERT(desc.stride != 0);
-		return static_cast<Uint32>(desc.size / desc.stride);
+		return static_cast<uint32>(desc.size / desc.stride);
 	}
 
 	GfxFormat GfxBuffer::GetFormat() const
@@ -155,7 +155,7 @@ namespace adria
 		return desc.format;
 	}
 
-	Bool GfxBuffer::IsMapped() const
+	bool GfxBuffer::IsMapped() const
 	{
 		return mapped_data != nullptr;
 	}
@@ -185,22 +185,22 @@ namespace adria
 		mapped_data = nullptr;
 	}
 
-	void GfxBuffer::Update(void const* src_data, Uint64 data_size, Uint64 offset /*= 0*/)
+	void GfxBuffer::Update(void const* src_data, uint64 data_size, uint64 offset /*= 0*/)
 	{
 		ADRIA_ASSERT(desc.resource_usage == GfxResourceUsage::Upload);
 		if (mapped_data)
 		{
-			memcpy((Uint8*)mapped_data + offset, src_data, data_size);
+			memcpy((uint8*)mapped_data + offset, src_data, data_size);
 		}
 		else
 		{
 			Map();
 			ADRIA_ASSERT(mapped_data);
-			memcpy((Uint8*)mapped_data + offset, src_data, data_size);
+			memcpy((uint8*)mapped_data + offset, src_data, data_size);
 		}
 	}
 
-	void GfxBuffer::SetName(Char const* name)
+	void GfxBuffer::SetName(char const* name)
 	{
 		resource->SetName(ToWideString(name).c_str());
 	}

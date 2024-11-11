@@ -7,12 +7,12 @@ namespace adria
 		: rg(rg), rg_pass(rg_pass)
 	{}
 
-	Bool RenderGraphBuilder::IsTextureDeclared(RGResourceName name) const
+	bool RenderGraphBuilder::IsTextureDeclared(RGResourceName name) const
 	{
 		return rg.IsTextureDeclared(name);
 	}
 
-	Bool RenderGraphBuilder::IsBufferDeclared(RGResourceName name) const
+	bool RenderGraphBuilder::IsBufferDeclared(RGResourceName name) const
 	{
 		return rg.IsBufferDeclared(name);
 	}
@@ -289,7 +289,7 @@ namespace adria
 		return read_write_id;
 	}
 
-	void RenderGraphBuilder::SetViewport(Uint32 width, Uint32 height)
+	void RenderGraphBuilder::SetViewport(uint32 width, uint32 height)
 	{
 		rg_pass.viewport_width = width;
 		rg_pass.viewport_height = height;

@@ -13,12 +13,12 @@
 
 namespace adria
 {
-	static TAutoConsoleVariable<Bool>  Bloom("r.Bloom", false, "Enable or Disable Bloom");
-	static TAutoConsoleVariable<Float> BloomRadius("r.Bloom.Radius", 0.25f, "Controls the radius of the bloom effect");
-	static TAutoConsoleVariable<Float> BloomIntensity("r.Bloom.Intensity", 1.33f, "Controls the intensity of the bloom effect");
-	static TAutoConsoleVariable<Float> BloomBlendFactor("r.Bloom.BlendFactor", 0.25f, "Controls the blend factor of the bloom effect");
+	static TAutoConsoleVariable<bool>  Bloom("r.Bloom", false, "Enable or Disable Bloom");
+	static TAutoConsoleVariable<float> BloomRadius("r.Bloom.Radius", 0.25f, "Controls the radius of the bloom effect");
+	static TAutoConsoleVariable<float> BloomIntensity("r.Bloom.Intensity", 1.33f, "Controls the intensity of the bloom effect");
+	static TAutoConsoleVariable<float> BloomBlendFactor("r.Bloom.BlendFactor", 0.25f, "Controls the blend factor of the bloom effect");
 
-	BloomPass::BloomPass(GfxDevice* gfx, Uint32 w, Uint32 h) : gfx(gfx), width(w), height(h)
+	BloomPass::BloomPass(GfxDevice* gfx, uint32 w, uint32 h) : gfx(gfx), width(w), height(h)
 	{
 		CreatePSOs();
 	}
@@ -26,10 +26,10 @@ namespace adria
 
 	void BloomPass::AddPass(RenderGraph& rg, PostProcessor* postprocessor)
 	{
-		Uint32 pass_count = (Uint32)std::floor(log2f((Float)std::max(width, height))) - 3;
+		uint32 pass_count = (uint32)std::floor(log2f((float)std::max(width, height))) - 3;
 		std::vector<RGResourceName> downsample_mips(pass_count);
 		downsample_mips[0] = DownsamplePass(rg, postprocessor->GetFinalResource(), 1);
-		for (Uint32 i = 1; i < pass_count; ++i)
+		for (uint32 i = 1; i < pass_count; ++i)
 		{
 			downsample_mips[i] = DownsamplePass(rg, downsample_mips[i - 1], i + 1);
 		}
@@ -37,7 +37,7 @@ namespace adria
 		std::vector<RGResourceName> upsample_mips(pass_count);
 		upsample_mips[pass_count - 1] = downsample_mips[pass_count - 1];
 
-		for (Sint32 i = pass_count - 2; i >= 0; --i)
+		for (int32 i = pass_count - 2; i >= 0; --i)
 		{
 			upsample_mips[i] = UpsamplePass(rg, downsample_mips[i], upsample_mips[i + 1], i + 1);
 		}
@@ -46,12 +46,12 @@ namespace adria
 		rg.GetBlackboard().Add<BloomBlackboardData>(std::move(blackboard_data));
 	}
 
-	void BloomPass::OnResize(Uint32 w, Uint32 h)
+	void BloomPass::OnResize(uint32 w, uint32 h)
 	{
 		width = w, height = h;
 	}
 
-	Bool BloomPass::IsEnabled(PostProcessor const*) const
+	bool BloomPass::IsEnabled(PostProcessor const*) const
 	{
 		return Bloom.Get();
 	}
@@ -89,10 +89,10 @@ namespace adria
 		upsample_pso = gfx->CreateComputePipelineState(compute_pso_desc);
 	}
 
-	RGResourceName BloomPass::DownsamplePass(RenderGraph& rg, RGResourceName input, Uint32 pass_idx)
+	RGResourceName BloomPass::DownsamplePass(RenderGraph& rg, RGResourceName input, uint32 pass_idx)
 	{
-		Uint32 target_dim_x = std::max(1u, width >> pass_idx);
-		Uint32 target_dim_y = std::max(1u, height >> pass_idx);
+		uint32 target_dim_x = std::max(1u, width >> pass_idx);
+		uint32 target_dim_y = std::max(1u, height >> pass_idx);
 
 		RGResourceName output = RG_NAME_IDX(BloomDownsample, pass_idx);
 		FrameBlackboardData const& frame_data = rg.GetBlackboard().Get<FrameBlackboardData>();
@@ -127,14 +127,14 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct BloomDownsampleConstants
 				{
-					Float    dims_inv_x;
-					Float    dims_inv_y;
-					Uint32   source_idx;
-					Uint32   target_idx;
+					float    dims_inv_x;
+					float    dims_inv_y;
+					uint32   source_idx;
+					uint32   target_idx;
 				} constants =
 				{
 					.dims_inv_x = 1.0f / target_dim_x,
@@ -152,7 +152,7 @@ namespace adria
 		return output;
 	}
 
-	RGResourceName BloomPass::UpsamplePass(RenderGraph& rg, RGResourceName input_high, RGResourceName input_low, Uint32 pass_idx)
+	RGResourceName BloomPass::UpsamplePass(RenderGraph& rg, RGResourceName input_high, RGResourceName input_low, uint32 pass_idx)
 	{
 		struct BloomUpsamplePassData
 		{
@@ -161,8 +161,8 @@ namespace adria
 			RGTextureReadOnlyId  input_high;
 		};
 
-		Uint32 target_dim_x = std::max(1u, width >> pass_idx);
-		Uint32 target_dim_y = std::max(1u, height >> pass_idx);
+		uint32 target_dim_x = std::max(1u, width >> pass_idx);
+		uint32 target_dim_y = std::max(1u, height >> pass_idx);
 
 		RGResourceName output = pass_idx != 1 ? RG_NAME_IDX(BloomUpsample, pass_idx) : RG_NAME(Bloom);
 		FrameBlackboardData const& frame_data = rg.GetBlackboard().Get<FrameBlackboardData>();
@@ -193,16 +193,16 @@ namespace adria
 				};
 				GfxDescriptor dst_descriptor = gfx->AllocateDescriptorsGPU(ARRAYSIZE(src_descriptors));
 				gfx->CopyDescriptors(dst_descriptor, src_descriptors);
-				Uint32 const i = dst_descriptor.GetIndex();
+				uint32 const i = dst_descriptor.GetIndex();
 
 				struct BloomUpsampleConstants
 				{
-					Float    dims_inv_x;
-					Float    dims_inv_y;
-					Uint32   low_input_idx;
-					Uint32   high_input_idx;
-					Uint32   output_idx;
-					Float    radius;
+					float    dims_inv_x;
+					float    dims_inv_y;
+					uint32   low_input_idx;
+					uint32   high_input_idx;
+					uint32   output_idx;
+					float    radius;
 				} constants =
 				{
 					.dims_inv_x = 1.0f / (target_dim_x),

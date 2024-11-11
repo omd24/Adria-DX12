@@ -11,50 +11,50 @@ namespace adria
 		explicit Image(GfxFormat format) : format(format) {}
 		explicit Image(std::string_view file_path);
 
-		Uint32 Width() const
+		uint32 Width() const
 		{
 			return width;
 		}
-		Uint32 Height() const
+		uint32 Height() const
 		{
 			return height;
 		}
-		Uint32 Depth() const
+		uint32 Depth() const
 		{
 			return depth;
 		}
-		Uint32 MipLevels() const
+		uint32 MipLevels() const
 		{
 			return mip_levels;
 		}
 		GfxFormat Format() const { return format; }
-		Bool IsHDR() const { return is_hdr; }
-		Bool IsCubemap() const { return is_cubemap; }
+		bool IsHDR() const { return is_hdr; }
+		bool IsCubemap() const { return is_cubemap; }
 
-		template<typename T = Uint8>
+		template<typename T = uint8>
 		T const* Data() const;
-		template<typename T = Uint8>
-		T const* MipData(Uint32 mip_level) const;
+		template<typename T = uint8>
+		T const* MipData(uint32 mip_level) const;
 
 		Image const* NextImage() const { return next_image.get(); }
 
 	private:
-		Uint32 width = 0;
-		Uint32 height = 0;
-		Uint32 depth = 0;
-		Uint32 mip_levels = 0;
-		std::vector<Uint8> pixels;
-		Bool is_hdr = false;
-		Bool is_cubemap = false;
-		Bool is_srgb = false;
+		uint32 width = 0;
+		uint32 height = 0;
+		uint32 depth = 0;
+		uint32 mip_levels = 0;
+		std::vector<uint8> pixels;
+		bool is_hdr = false;
+		bool is_cubemap = false;
+		bool is_srgb = false;
 		GfxFormat format = GfxFormat::UNKNOWN;
 		std::unique_ptr<Image> next_image = nullptr;
 
 	private:
-		Uint64 SetData(Uint32 width, Uint32 height, Uint32 depth, Uint32 mip_levels, void const* data);
+		uint64 SetData(uint32 width, uint32 height, uint32 depth, uint32 mip_levels, void const* data);
 
-		Bool LoadDDS(std::string_view texture_path);
-		Bool LoadSTB(std::string_view texture_path);
+		bool LoadDDS(std::string_view texture_path);
+		bool LoadSTB(std::string_view texture_path);
 	};
 
 	template<typename T>
@@ -64,10 +64,10 @@ namespace adria
 	}
 
 	template<typename T>
-	T const* Image::MipData(Uint32 mip_level) const
+	T const* Image::MipData(uint32 mip_level) const
 	{
-		Uint64 offset = 0;
-		for (Uint32 mip = 0; mip < mip_level; ++mip)
+		uint64 offset = 0;
+		for (uint32 mip = 0; mip < mip_level; ++mip)
 		{
 			offset += GetTextureMipByteSize(format, width, height, depth, mip);
 		}
